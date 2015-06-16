@@ -1,17 +1,10 @@
 
+NOT A PROFILE, BUT PARTIAL IDEAS THAT MAY OR MAY NOT BE USED LATER
 
 ---context:way   # following code refers to way-tags
 
+SAC ALREADY IMPLEMENTED
 
-assign  SAC_scale_penalty
-                            if      sac_scale=                          then 0.0
-                            else if sac_scale=hiking|T1-hiking|yes      then 0.2
-                            else if sac_scale=mountain_hiking           then 0.5
-                            else if sac_scale=demanding_mountain_hiking then 1.0
-                            else if sac_scale=alpine_hiking             then 2.0
-                            else if sac_scale=demanding_alpine_hiking   then 4.0
-                            else if sac_scale=difficult_alpine_hiking   then 8.0
-                            else 0.0   
                             
 assign highway_penalty
   
