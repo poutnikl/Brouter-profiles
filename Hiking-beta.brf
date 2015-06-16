@@ -7,7 +7,7 @@
 ---context:global
 
 assign   consider_elevation       1    # 0 as default, otherwise less interesting flat roads are chosen.
-assign   shortest_way             0    # 0 as default
+assign   shortest_way             0    # 0 as default, duplicate shortest standard profile, SAC access limit ignored for now
 
 assign   iswet                    0    # 0 as default, 1 tries to prevent muddy boots and wet buttocks
 
