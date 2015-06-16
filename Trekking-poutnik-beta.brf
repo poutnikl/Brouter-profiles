@@ -383,7 +383,7 @@ assign initialcost =
 # Version 2.1.2 BETA - + 3state muddy/wet/dry track costfactors
 # Version 2.1.3 BETA - + class-selective cycloroute usage
 # Version 2.1.4 BETA - + smoothness penalty
-# Version 2.1.5 BETA - + hill profiles
+# Version 2.1.5 RELEASE  - + hill profiles
 # Version 2.1.6 BETA - + mtb:scale integrated to smoothness penalty
 # Version 2.1.7 BETA - + smoothnesspenalty integrated to MTB factor, 
 #                      * default routelevel=2 and cycleroutes_pref=0.1
