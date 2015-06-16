@@ -1,6 +1,7 @@
 
 # *** Based on Trekking profile, added flag driven customizations
-# 10/6/2015 v1.7.2 BETA - Fixed general way access penalties
+# 15/6/2015 v1.7.3 BETA * SAC-MTB scale integration reevaluated, increased MTB scale penalty
+* MTB scale penalty used as fallback if no SAC rating
 # See bottom for Changelog and verbose comments.
 
 ---context:global
