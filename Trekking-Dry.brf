@@ -1,6 +1,7 @@
 # Trekking-Poutnik profile, template for Trekking profile variants, based on previously published Trekking-custom.brf
 # For *)-like comments and history log, see the profile bottom.
 # Version 2.1.5 BETA - implemented hill profiles
+# My default Trekking profile,
 ---context:global
 assign   iswet                0 # 0 as default, *)
 assign   consider_elevation   1 # 1 as default
