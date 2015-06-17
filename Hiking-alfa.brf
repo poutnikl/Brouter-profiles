@@ -1,13 +1,13 @@
-
 # *** Based on Trekking profile, added flag driven customizations
 # 15/6/2015 v1.7.3 BETA * SAC-MTB scale integration reevaluated, increased MTB scale penalty
-* MTB scale penalty used as fallback if no SAC rating
+                        * MTB scale penalty used as fallback if no SAC rating
+#By default, this profile avoid Alpine hiking and prefers no mountain hiking
 # See bottom for Changelog and verbose comments.
 
 ---context:global
 
 assign   consider_elevation       1    # 0 as default, otherwise less interesting flat roads are chosen.
-assign   shortest_way             0    # 0 as default
+assign   shortest_way             0    # 0 as default, duplicate shortest standard profile, SAC access limit ignored for now
 
 assign   iswet                    0    # 0 as default, 1 tries to prevent muddy boots and wet buttocks
 
@@ -281,6 +281,7 @@ assign initialcost switch or bikeaccess footaccess 0 1000000
 
 # changelog:
 # Feature is / + added / - removed / * changed / ! fixed
+
 # Hiking Version 1.6 ALFA
 # 2014-10-10 (c) Poutnik
 # Route_foot related hints were improved with usage of Hiking.brf from below and by Arndt comment
