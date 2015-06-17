@@ -212,28 +212,18 @@ assign costfactor
 
   switch    highway=pedestrian       switch ismuddy 1.3 1.0
   switch    highway=bridleway        switch ismuddy 2.5 1.2
-  switch    highway=cycleway         switch ismuddy 1.4
-                                     switch iswet   1.0 1.2
+  switch    highway=cycleway         switch ismuddy 1.4     switch iswet   1.0 1.2
   switch    highway=residential|living_street    
-                                     switch ismuddy 1.5
-                                     switch iswet   1.0 1.1
-  switch    highway=service          switch ismuddy 1.5
-                                     switch iswet   1.1 1.3
+                                     switch ismuddy 1.5     switch iswet   1.0 1.1
+  switch    highway=service          switch ismuddy 1.5     switch iswet   1.1 1.3
   
   switch highway=track|road|path|footway
-    switch tracktype=grade1 switch ismuddy 1.1
-							switch iswet   1.0  1.21
-    switch tracktype=grade2 switch ismuddy 1.25
-							switch iswet   1.11 1.12
-    switch tracktype=grade3 switch ismuddy 1.4
-							switch iswet   1.21 1.07
-    switch tracktype=grade4 switch ismuddy 1.7
-							switch iswet   1.31 1.05
-    switch tracktype=grade5 switch ismuddy 2.0
-							switch iswet   1.5  1.01
-
-                            switch ismuddy 2.01
-							switch iswet   1.51 1.12
+    switch tracktype=grade1 switch ismuddy 1.1      switch iswet   1.0  1.21
+    switch tracktype=grade2 switch ismuddy 1.25		switch iswet   1.11 1.12
+    switch tracktype=grade3 switch ismuddy 1.4		switch iswet   1.21 1.07
+    switch tracktype=grade4 switch ismuddy 1.7		switch iswet   1.31 1.05
+    switch tracktype=grade5 switch ismuddy 2.0		switch iswet   1.5  1.01
+                            switch ismuddy 2.01		switch iswet   1.51 1.12
 							
   switch highway=motorway|motorway_link    100000
   switch highway=proposed|abandoned   switch ismuddy 3 1.5
