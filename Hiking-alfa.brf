@@ -175,21 +175,21 @@ assign  SAC_scale_access   # if SAC_scale_limit < SAC then true else false
                                       
 assign  SAC_scale_penalty
 
-                            if not SAC_scale_access  then  SAC_access_penalty  # not allowed SAC scale
-                            else if equal SAC           SAC_scale_preferred       then 0.0
-                            else if equal ( add SAC 1 ) SAC_scale_preferred       then SAC_K1
-                            else if equal ( add SAC 2 ) SAC_scale_preferred       then SAC_K1_2 
-                            else if equal ( add SAC 3 ) SAC_scale_preferred       then SAC_K1_3 
-                            else if equal ( add SAC 4 ) SAC_scale_preferred       then SAC_K1_4 
-                            else if equal ( add SAC 5 ) SAC_scale_preferred       then SAC_K1_5 
-                            else if equal ( add SAC 6 ) SAC_scale_preferred       then SAC_K1_6 
-                            else if equal ( add SAC_scale_preferred 1 ) SAC       then SAC_K2 
-                            else if equal ( add SAC_scale_preferred 2 ) SAC       then SAC_K2_2
-                            else if equal ( add SAC_scale_preferred 3 ) SAC       then SAC_K2_3 
-                            else if equal ( add SAC_scale_preferred 4 ) SAC       then SAC_K2_4 
-                            else if equal ( add SAC_scale_preferred 5 ) SAC       then SAC_K2_5 
-                            else if equal ( add SAC_scale_preferred 6 ) SAC       then SAC_K2_6 
-                            else 1.0   
+    if not SAC_scale_access  then  SAC_access_penalty  # not allowed SAC scale
+       else if equal SAC           SAC_scale_preferred       then 0.0
+       else if equal ( add SAC 1 ) SAC_scale_preferred       then SAC_K1
+       else if equal ( add SAC 2 ) SAC_scale_preferred       then SAC_K1_2 
+       else if equal ( add SAC 3 ) SAC_scale_preferred       then SAC_K1_3 
+       else if equal ( add SAC 4 ) SAC_scale_preferred       then SAC_K1_4 
+       else if equal ( add SAC 5 ) SAC_scale_preferred       then SAC_K1_5 
+       else if equal ( add SAC 6 ) SAC_scale_preferred       then SAC_K1_6 
+       else if equal ( add SAC_scale_preferred 1 ) SAC       then SAC_K2 
+       else if equal ( add SAC_scale_preferred 2 ) SAC       then SAC_K2_2
+       else if equal ( add SAC_scale_preferred 3 ) SAC       then SAC_K2_3 
+       else if equal ( add SAC_scale_preferred 4 ) SAC       then SAC_K2_4 
+       else if equal ( add SAC_scale_preferred 5 ) SAC       then SAC_K2_5 
+       else if equal ( add SAC_scale_preferred 6 ) SAC       then SAC_K2_6 
+       else 1.0   
 
 assign costfactor
   
