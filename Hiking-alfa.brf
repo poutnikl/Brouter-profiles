@@ -153,22 +153,26 @@ assign accesspenalty switch footaccess 0 switch bikeaccess 4 100000
 #    http://wiki.openstreetmap.org/wiki/Key:sac_scale
 
 assign SAC 
-if      sac_scale=difficult_alpine_hiking   then 6
-else if sac_scale=demanding_alpine_hiking   then 5
-else if sac_scale=alpine_hiking             then 4
-else if sac_scale=demanding_mountain_hiking then 3
-else if sac_scale=mountain_hiking           then 2
-else if sac_scale=hiking|T1-hiking|yes      then 1
-                                
-else if mtb:scale=        then 0
-                                
-else if mtb:scale=6|5     then 5
-else if mtb:scale=4       then 4
-else if mtb:scale=3       then 3
-else if mtb:scale=2-|2|2+ then 2
-else if mtb:scale=1+|1    then 1
-
-else 0
+    if sac_scale= then (
+    
+        if mtb:scale=        then 0
+        
+        else if mtb:scale=6|5     then 5
+        else if mtb:scale=4       then 4
+        else if mtb:scale=3       then 3
+        else if mtb:scale=2-|2|2+ then 2
+        else if mtb:scale=1+|1    then 1
+        else 0
+        )
+    else
+    
+        if      sac_scale=difficult_alpine_hiking   then 6
+        else if sac_scale=demanding_alpine_hiking   then 5
+        else if sac_scale=alpine_hiking             then 4
+        else if sac_scale=demanding_mountain_hiking then 3
+        else if sac_scale=mountain_hiking           then 2
+        else if sac_scale=hiking|T1-hiking|yes      then 1
+        else 0
                                                                  
 assign  SAC_scale_access   # if SAC_scale_limit < SAC then true else false 
 	if sac_scale= then true  else equal ( max SAC_scale_limit SAC ) SAC_scale_limit  
@@ -301,4 +305,6 @@ assign initialcost switch or bikeaccess footaccess 0 1000000
 # 10/6/2015 v1.7.2 BETA ! Fixed general way access penalties
 # 15/6/2015 v1.7.3 BETA * SAC-MTB scale integration reevaluated, increased MTB scale penalty
                         * MTB scale penalty used as fallback if no SAC rating
+# 16/6/2015 v1.7.4 ALFA * Optimized SAC logic 
+
 
