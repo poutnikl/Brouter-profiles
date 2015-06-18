@@ -8,7 +8,7 @@ Trekking MTBs are not really intended to MTB, but rather making trekking routes 
 
 Hiking Beta is still under development, involving wet modes and MTP + SAC difficulty scales. I got a feedback it seems quite useable.
 
-For profile development, see repositories
+For profile template development, see repositories
 
 https://github.com/poutnikl/Trekking-Poutnik
 
