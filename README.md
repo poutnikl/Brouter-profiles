@@ -6,7 +6,7 @@ Trekking Wet is modification of above , penalizing muddy / slicky surfaces.
 
 Trekking MTBs are not really intended to MTB, but rather making trekking routes more MTB-like.
 
-Hiking Beta is still under development, involving wet modes and MTP + SAC difficulty scales.
+Hiking Beta is still under development, involving wet modes and MTP + SAC difficulty scales. I got a feedback it seems quite useable.
 
 For profile development, see repositories
 
