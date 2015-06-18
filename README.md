@@ -2,7 +2,7 @@
 
 Trekking Dry is my default trekking profile. It has multiple enhancement wrt reference Trekking.brf.
 
-Trekking Wet is modification of above , avoiding muddy / slicky track.
+Trekking Wet is modification of above , penalizing muddy / slicky surfaces.
 
 Trekking MTBs are not really intended to MTB, but rather making trekking routes more MTB-like.
 
