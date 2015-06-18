@@ -1,7 +1,7 @@
 # Trekking-Poutnik profile, template for Trekking profile variants, based on previously published Trekking-custom.brf
 # For *)-like comments and history log, see the profile bottom.
-# Version 2.1.5 RELEASE - implemented hill profiles
-# To be used in wet weather, affecting surface preferences
+# Version 2.1.11 RELEASE - * modified MTB and smoothness penalties 
+
 ---context:global
 assign   iswet                1 # 0 as default, *)
 assign   consider_elevation   1 # 1 as default
@@ -11,24 +11,27 @@ assign   set_downhill_cost    1 # 1 as default
 assign   allow_steps          1 # 1 as default
 assign   allow_ferries        1 # 1 as default
 
-assign   cycleroutes_pref     0.1 # **) costfactor penalty for not being cycleroute.
-assign   routelevel           4 # default =4, 1-icn only, 2 +ncn, 3 +rcn, 4 all
+assign   cycleroutes_pref     0.1 # **) costfactor penalty for not being cycleroute
+assign   routelevel           2 # *****)  default =2, 1-icn only, 2 +ncn, 3 +rcn, 4 all
+
 assign   MTB_factor           0.0 # default 0.0, recommended -0.5 - +1.0, reasonable -2.0 .. +3.0, "+" promotes bad roads, penalizes mainroads, "-" the oposite  ****)
-assign   hills                1 # 1 as default, 0=trekking profile default, 1=avoid steep >3.0 hills, 2= avoid all slopes, 3= simulates ascend/length time equivalent
+assign   hills                1 # 0 as default, 0=trekking profile default, 1=avoid steep >3.0 hills, 2= avoid all slopes, 3= simulates ascend/length time equivalent
  
 assign   use_proposed_cn      1 # 0 as default, considers proposed cycle networks as unmarked but valid cycleroutes.
 assign   avoid_unsafe         0 # 0 as default, gives penalty to road without bike friendly status.
-assign   unsafe_penalty       0.5 # 2 as default, decrease to avoid U-like safe routes
-assign   cost_of_unknown      1.5 # 2 as default, cost of highway=
 
-assign   uphillcostvalue	  if equal hills 2 then 80  else if equal hills 1 then 70  else if equal hills 3 then  60 else 0  # 0 as default
-assign   uphillcutoffvalue	  if equal hills 2 then 1.0 else if equal hills 1 then 3.0 else if equal hills 3 then 0.5 else 1.5 # 1.5 as default
-assign   downhillcutoffvalue  if equal hills 2 then 1.0 else if equal hills 1 then 1.5 else if equal hills 3 then 1.5 else 1.5  # 1.5 as default
-assign   downhillcostvalue    if equal hills 2 then 80  else if equal hills 1 then 60  else if equal hills 3 then  0  else 60  # 60 as default
+assign   uphillcostvalue	  switch equal hills 2  80  switch equal hills 1 70  switch equal hills 3   60  0 
+assign   uphillcutoffvalue	  switch equal hills 2  1.0 switch equal hills 1 3.0 switch equal hills 3  0.5  1.5 
+assign   downhillcutoffvalue  switch equal hills 2  0.5 switch equal hills 1 1.5 switch equal hills 3  1.5  1.5 
+assign   downhillcostvalue    switch equal hills 2  80  switch equal hills 1 60  switch equal hills 3   0   60  
 
 assign   elevationpenaltybuffer 7   # 5 as default
 assign   elevationmaxbuffer     13  # 10 as default
-assign   elevationbufferreduce  0.5 # 0.0 as default
+assign   elevationbufferreduce  switch equal hills 2 0.5   switch equal hills 1 0.8   switch equal hills 3  0.5      0.5 # 
+
+# Internal parameters
+
+assign   validForBikes        1
 
 assign   downhillcost if ( and consider_elevation set_downhill_cost )  then downhillcostvalue else 0
 assign   uphillcost   if ( and consider_elevation set_uphill_cost   )  then uphillcostvalue  else 0
@@ -36,10 +39,13 @@ assign   uphillcost   if ( and consider_elevation set_uphill_cost   )  then uphi
 assign   uphillcutoff    if ( and consider_elevation set_uphill_cost )   then    uphillcutoffvalue else 1.5
 assign   downhillcutoff  if ( and consider_elevation set_downhill_cost ) then  downhillcutoffvalue else 1.5 
 
-assign   validForBikes        1
+assign	network_coef		add 1.0 ( multiply -1.0 cycleroutes_pref )  
 
 assign pass1coefficient 1.8
-assign pass2coefficient -1
+assign pass2coefficient 0
+
+assign   unsafe_penalty       1.0 # 1 - was 2 in Trekking, but this may cause U-like safe routes
+assign   cost_of_unknown      2.0 # 2 as default, cost of highway=
 
 ---context:way   # following code refers to way-tags
 
@@ -62,7 +68,7 @@ assign is_ldcr if      not nodeaccessgranted         then false
                else if equal routelevel 2 then or isicn isncn
                else if equal routelevel 3 then or or isrcn isncn isicn
                else if equal routelevel 4 then any_cn
-               else any_cn
+               else or isicn isncn
                      
 
 assign isbike or bicycle=yes|permissive|designated nodeaccessgranted
@@ -72,24 +78,42 @@ assign isunpaved not or surface= or ispaved or surface=fine_gravel surface=cobbl
 assign probablyGood or ispaved  and isbike not isunpaved  #probably good surface - weather independent
 
 assign istrack  highway=track|road|path|footway
-assign ismainroad highway=motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link
+assign ismainroad highway=motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified
 
-assign ismuddy and ( or isunpaved surface= ) ( and iswet   ( not surface=gravel|pebblestone  ) ) # ***)
+assign ismuddy and or isunpaved surface=  
+               and iswet not surface=gravel|pebblestone   # ***)
 
-assign turncost       if  ismainroad  then 90 else if ispaved then 60 else 30
-                      # Turn cost is based solely on estimation of road speediness and eventual time cost of turning, partially promoting tracks )
+assign turncost       if  ismainroad  then 90    else if ispaved then 60   else 30
+# Turn cost is based solely on estimation of road speediness and eventual time cost of turning, partially promoting tracks )
                       
-assign smoothnesspenalty 
-if not consider_smoothness then 0.0 
-else
-if smoothness=excellent|good|very_good     then 0.0 else
-if smoothness=intermediate                 then 0.1 else
-if smoothness=bad|robust_wheels            then 0.2 else
-if smoothness=very_bad|high_clearance      then 0.4 else
-if smoothness=horrible|off_road_wheels     then 0.7 else
-if smoothness=very_horrible                then 1.2 else
-if smoothness=impassable                   then 2.0 
+assign smoothnesspenalty  if not consider_smoothness then 0.0 else
+# Low values for low levels are used to avoid  double penalting because of grade=*/surface=*
+
+if smoothness=                                            then 0.0 else
+if smoothness=excellent|very_good|good                    then 0.0 else
+if smoothness=intermediate                                then 0.2 else
+if smoothness=bad|robust_wheels                           then 0.5 else
+if smoothness=very_bad|high_clearance                     then 1.0 else
+if smoothness=horrible|off_road_wheels                    then 2.0 else
+if smoothness=very_horrible                               then 4.0 else
+if smoothness=impassable                                  then 8.0 else
+0.0
+
+assign mtbscalepenalty  if not consider_smoothness then 0.0 else
+
+# Low values for low levels are used to avoid  double penalting because of grade=*/surface=*
+# Remember this is for trekking bikes, not MTB
+
+if mtb:scale=        then 0.0 else   if mtb:scale=0-      then 0.1 else
+if mtb:scale=0       then 0.2 else   if mtb:scale=0+      then 0.4 else
+if mtb:scale=1-      then 0.8 else   if mtb:scale=1       then 1.2 else
+if mtb:scale=1+      then 1.8 else   if mtb:scale=2-      then 2.5 else
+if mtb:scale=2       then 4.0 else   if mtb:scale=2+      then 5.5 else
+if mtb:scale=3       then 8.0 else   
+if mtb:scale=4|5|6     then 9000 
 else 0.0
+
+assign roughnesspenalty max smoothnesspenalty mtbscalepenalty
 
 
 assign initialcost
@@ -114,9 +138,14 @@ assign bikeaccess
                             )
 					 else ( not bicycle=private|no|dismount )
 
-assign footaccess  or bikeaccess  or bicycle=dismount    switch foot=    defaultaccess      not or foot=private foot=no
+assign footaccess  or bikeaccess
+       or bicycle=dismount
+       switch foot=    defaultaccess      
+                       not or foot=private foot=no
 
-assign accesspenalty    switch bikeaccess   0    switch footaccess    4     100000
+assign accesspenalty    switch bikeaccess   0
+                        switch footaccess   4
+                        100000
 
 assign oneway     switch oneway=      junction=roundabout      oneway=yes|true|1
 
@@ -135,25 +164,23 @@ assign MTB_factor_for_road
     ( if      ( ismainroad )    then ( MTB_factor )  
       else if ( ispaved )       then ( multiply 0.33 MTB_factor )   
       else if ( not isunpaved ) then ( multiply -0.33 MTB_factor )   
-      else if ( isunpaved )     then ( multiply -1 MTB_factor )   
+      else if ( isunpaved )     then ( multiply -1 multiply MTB_factor ( add 1.0 ( multiply 0.33 roughnesspenalty ) ) )
       else                            0.0	 )
-
-           
-     
 
 assign rawcostfactor # can be <1, adjusted to >=1 in final step of calculation of costfactor, uphillcostfactor,downhillcostfactor
   
   add MTB_factor_for_road  # penalizes paved and promotes unpaved roads See *****) for more
   
-  add ( max max onewaypenalty accesspenalty smoothnesspenalty  )
+  add ( max max onewaypenalty accesspenalty roughnesspenalty  )
 
   switch and highway= not route=ferry  100000
   switch    highway=steps  switch allow_steps   40 100000
   switch    route=ferry    switch allow_ferries 5.67 100000
   
-  add    if   equal cycleroutes_pref 0.0  then 0.0   else if is_ldcr then 0.0 else cycleroutes_pref 
-             
+  #add ( if equal cycleroutes_pref 0.0  then 0.0  else if is_ldcr then 0.0 else cycleroutes_pref  )
+        
 
+ 
   switch    highway=pedestrian                        switch ismuddy 5 3
   switch    highway=bridleway                         switch ismuddy 8 5
   switch    highway=cycleway                          1.01
@@ -196,22 +223,32 @@ assign rawcostfactor # can be <1, adjusted to >=1 in final step of calculation o
                                               ) 
                                          else     0
 
-  switch highway=motorway|motorway_link    100000
-  switch highway=proposed|abandoned|construction  100000
+  switch highway=motorway|motorway_link|proposed|abandoned|construction  100000
   
   switch highway=trunk|trunk_link          ( switch isbike switch iswet 1.5 1.81 switch iswet 7 10 )
   switch highway=primary|primary_link      ( switch isbike switch iswet 1.21 1.48 switch iswet 2 3 )
   switch highway=secondary|secondary_link  ( switch isbike switch iswet 1.11 1.18 switch iswet 1.4 1.8 )
   switch highway=tertiary|tertiary_link    ( switch isbike switch iswet 1.04 1.08 switch iswet 1.22 1.41 )
   switch highway=unclassified              ( switch isbike switch iswet 1.02 1.05 switch iswet 1.11 1.3 )
-
+  
   cost_of_unknown # above highway tags do not apply
   
-  assign costfactor 
-    max 1.0 rawcostfactor # calculations may provide illegal costfactor < 1
+   assign rawcostfactor2  
+            if ( equal cycleroutes_pref 0.0 )  then  			   rawcostfactor 							# ignore cycleroutes
+			else if ( not nodeaccessgranted  ) then 			   add rawcostfactor  cycleroutes_pref      # is not a cycleroute
+            else if  is_ldcr                   then				   multiply rawcostfactor  network_coef     # is a considered cycleroute
+			else												   rawcostfactor                            # is a not considered cycleroute  
+		   
+
+			
+            
+  assign costfactor  # calculations may provide illegal costfactor < 1
+    max 1.0 rawcostfactor2
+ 
+
     
   assign uphillcostfactor = 
-	max 1.0  add rawcostfactor 
+	max 1.0  add rawcostfactor2 
                               if   ismainroad                         then 0.1 
                               else if ispaved                         then -0.1
                               else if surface=gravel|pebblestone      then 0.3
@@ -221,7 +258,7 @@ assign rawcostfactor # can be <1, adjusted to >=1 in final step of calculation o
                               
 
   assign downhillcostfactor =
-	max 1.0  add rawcostfactor
+	max 1.0  add rawcostfactor2
                               if      ismainroad                      then -0.2  
                               else if ispaved                         then -0.2  
                               else if surface=gravel|pebblestone|sand then 0.5
@@ -264,19 +301,20 @@ assign initialcost =
 #                      V E R B O S E   L E G E N D S                                       #
 #                                                                                          #
 ############################################################################################
-# *) ISWET
+# *) ISWET             iswet=0 is default with meaning of dry surfaces
 ############################################################################################
-# iswet=1 shifts costfactor preferences by increasing costfactors
-# of eventually muddy/slicky surfaces roads in wet weather, and decreasing costfactors
-# for fallback to better quality tracks or highway network.
-# It shifts the profile little toward fastbike standard profile, but still focusses on trekking.
-# iswet=0 is default, but profile costfactor values slightly modified wrt original Trekking profile
+# iswet=1 with meaning surfaces are wet. It increases costfactors of potentially bad surfaces,
+# especially those supposed to get muddy/slicky in wet weather, 
+# OTOH it decreases costfactors for better quality tracks or highway network.
+# It shifts the profile little toward fastbike standard profile, 
+# but still focusses on trekking.
+# 
 #
 ############################################################################################
 # **)  CYCLEROUTE PERFECTNESS - removed
-# Cycleroutes have calculates their costfactord and turncosts by the same way as regular ways,
-# Regular ways have additional penalty.
-# costfactor penalty for not being cycleroute. 0.0 = ignore cycleroutes, >0.6 similar as stick_to_cycleroutes
+# Cycleroutes have calculates their costfactors and turncosts by the same way as regular ways,
+# Regular ways have additional penalty cycleroutes_pref for not being cycleroute. 
+# 0.0 = ignore cycleroutes, 0.1-0.2 Prefering cycloroutes, >0.6 similar as stick_to_cycleroutes
 
 ############################################################################################
 #
@@ -310,10 +348,10 @@ assign initialcost =
 
 # The calculated values below is added to the costfactor.
 
-# + MTB_factor                for main roads (tertiaries and better),
-# + 0.33 * MTB_factor         for paved roads,
-# - 0.33 * MTB_factor         for not paved/not unpaved roads,
-# - MTB_factor                for unpaved roads.
+# + MTB_factor                                    for main roads (tertiaries and better),
+# + 0.33 * MTB_factor                             for paved roads,
+# - 0.33 * MTB_factor                             for not paved/not unpaved roads,
+# - MTB_factor * ( 1 + 0.33 * smoothnesspenalty ) for unpaved roads.  - at MTB_factor 3.0 smootheness is ignored
 #
 # Default   is 0.0 = no effect. 
 # Recommended -0.5 - +1.0
@@ -321,22 +359,35 @@ assign initialcost =
 #
 # Final costfactor is kept >= 1 for final costfacto values.
 #
-
-#
 #############################################################################################
-# *****) History
+# *****) routelevel
 #############################################################################################
 #
-# Version 2.0.0 BETA - organizing script without code changes
-# Version 2.0.1 BETA - fixed node initial cost logic (Mar 26 )
-# Version 2.0.2 BETA - partial syntax conversion (May 8 ), simplified uphill/downhill costs
-# Version 2.1 BETA - abandoned default compatibility with reference Trekking profile
-# Version 2.1.1 BETA - implemented MTB_factor + up/downhillcostfactors
-# Version 2.1.2 BETA - implemented 3state muddy/wet/dry track costfactors
-# Version 2.1.3 BETA - implemented class-selective cycloroute usage
-# Version 2.1.4 BETA - implemented smoothness penalty
-# Version 2.1.5 BETA - implemented hill profiles
-
-
-
-  
+# global parameter routelevel determines what cyclenetwork levels are preferred by cycleroutes_pref
+#            routelevel = 1  icn only
+#            routelevel = 2  icn + ncn only
+#            routelevel = 3  icn + ncn + rcn only
+#            routelevel = 4  all icn + ncn + rcn + lcn, including sproposed ones, if use_proposed_cn=1
+# Regardless of routelevel value,
+# all current + proposed  networks are used in nodeaccessgranted and isbike 
+#
+#############################################################################################
+# History log
+#############################################################################################
+# feature flags: + = new / ! = fixed / - = removed / * = changed or improved
+# Version 2.0.0 BETA - * organizing script without code changes
+# Version 2.0.1 BETA - ! node initial cost logic (Mar 26 )
+# Version 2.0.2 BETA - * partial syntax conversion (May 8 ), simplified uphill/downhill costs
+# Version 2.1   BETA - * abandoned default compatibility with reference Trekking profile
+# Version 2.1.1 BETA - + MTB_factor + up/downhillcostfactors
+# Version 2.1.2 BETA - + 3state muddy/wet/dry track costfactors
+# Version 2.1.3 BETA - + class-selective cycloroute usage
+# Version 2.1.4 BETA - + smoothness penalty
+# Version 2.1.5 RELEASE  - + hill profiles
+# Version 2.1.6 BETA - + mtb:scale integrated to smoothness penalty
+# Version 2.1.7 BETA - + smoothnesspenalty integrated to MTB factor, 
+#                      * default routelevel=2 and cycleroutes_pref=0.1
+# Version 2.1.8 BETA - * splitting smoothness penalty
+# Version 2.1.9 ALFA - * Modified Cycleroute preference calculation - non cycleroutes, cycleroutes not considered, cycleroutes considered, 
+# Version 2.1.10 ALFA - * increased smoothness penalties 
+# Version 2.1.11 RELEASE - * modified MTB and smoothness penalties 
