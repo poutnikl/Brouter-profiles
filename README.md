@@ -1,9 +1,10 @@
 
 
-Here is presented the list of end user variants of my Trekking-Poutnik bike profile template for Android Brouter routing application
+Here is presented the list 
+of end user variants of my Trekking-Poutnik bike profile template 
+for Android Brouter routing application
 
-See more here 
-
+See more here  
 https://github.com/poutnikl/Brouter-profiles/wiki/Brouter-profiles-collection
 
 
