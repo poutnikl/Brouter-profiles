@@ -1,6 +1,6 @@
 # *** Based on Trekking profile, added flag driven customizations
 # 15/6/2015 v1.7.3 BETA * SAC-MTB scale integration reevaluated, increased MTB scale penalty
-                        * MTB scale penalty used as fallback if no SAC rating
+#                       * MTB scale penalty used as fallback if no SAC rating
 #By default, this profile avoid Alpine hiking and prefers no mountain hiking
 # See bottom for Changelog and verbose comments.
 
@@ -306,9 +306,9 @@ assign initialcost switch or bikeaccess footaccess 0 1000000
 #v 1.6 - initialcost penalty only for sticking routes, decreased way penalties for preferring routes
 # 31/5/2015 v 1.7 ALFA  + sac_scale + sac_scale_limit implemented 
 # 10/6/2015 v1.7.1 ALFA * sac_scale improved
-                        + MTB scale integrated to SAC scale
+#                        + MTB scale integrated to SAC scale
 #                       + sac_scale_preferred implemented, with progressive penalizing for SAC <> SAC preferred
 # 10/6/2015 v1.7.2 BETA ! Fixed general way access penalties
 # 15/6/2015 v1.7.3 BETA * SAC-MTB scale integration reevaluated, increased MTB scale penalty
-                        * MTB scale penalty used as fallback if no SAC rating
+#                       * MTB scale penalty used as fallback if no SAC rating
 
