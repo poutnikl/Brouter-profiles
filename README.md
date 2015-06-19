@@ -1,16 +1,8 @@
 ### Brouter-profiles collection
 
-List of end user variants of Trekking-Poutnik bike profile template for Android Brouter routing application 
-
+Here is presented the list of end user variants of my Trekking-Poutnik bike profile template for Android Brouter routing application 
+Se more here https://github.com/poutnikl/Brouter-profiles/wiki/Brouter-profiles-collection
 -----------------------------------------
-Trekking Dry is my default trekking profile, being identical to default configuration of Trekking-Poutnik.brf template. It has multiple enhancement wrt reference Trekking.brf.
-
-Trekking Wet is modification of above , penalizing muddy / slicky surfaces.
-
-Trekking MTBs are not really intended to MTB, but rather making trekking routes more MTB-like. They involve MTB_factor,
- progressively promoting - penalizing from unpaved surfaces to mainroads ( penalties -0.2..0.2 for light, -0.5..0.5 for medium, -1.0..1.0 for Strong. Additionally it partially cancels roughness penalty.
-
-Hiking Beta is still under development, involving wet modes and MTP + SAC difficulty scales. I got a feedback it seems quite useable.
 
 For profile template development, see repositories
 
