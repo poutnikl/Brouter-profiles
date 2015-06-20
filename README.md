@@ -4,6 +4,7 @@
 * Click on the profile of your interest, click on the RAW button and save the .BRF file locally.
 * Notice the comments at bottom of profile text.
 * See more here [Brouter-profiles-collection](https://github.com/poutnikl/Brouter-profiles/wiki/Brouter-profiles-collection).  
+* @abrensch @nrenner  Feel free to refer to this collection in your resources.
 
 
 #### Profile development
