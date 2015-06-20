@@ -1,7 +1,7 @@
 # Walking-Hiking-Mountain/Alpine Hiking profile TEMPLATE
 # 20/6/2015 v1.7.6 RELEASE * Modified and simplified route preferencing
 # See bottom for Changelog and verbose comments.
-# Mountain-hiking, taking as optimum Demanding mountain hiking ( T3 ). acccepting as maximum SAC T54 - Demanding Alpine Hiking
+# Mountain-hiking, taking as optimum Demanding mountain hiking ( T3 ). acccepting as maximum SAC T5 - Demanding Alpine Hiking
 ---context:global
 
 assign   consider_elevation       1    # 0 as default, otherwise less interesting flat roads are chosen.
@@ -13,9 +13,9 @@ assign   hiking_routes_preference  0.10    # 0.10 as default
 # Increases cost of non hiking routes by factor 1 + hiking_routes_preference
 
 #SAC - mountain hiking - see http://wiki.openstreetmap.org/wiki/Key:sac_scale
-assign   SAC_scale_limit          4    # 0..6, 0 to avoid any SAC paths, 1 for T1 as maximum, 6 for T6 as maximum
+assign   SAC_scale_limit          5    # 0..6, 0 to avoid any SAC paths, 1 for T1 as maximum, 6 for T6 as maximum
                                        # all paths with sac_scale higher than  SAC_scale_limit are forbidden.
-assign   SAC_scale_preferred      2    # The same, but the preferred SAC scale level. Level below are slightly, above strongly penalized
+assign   SAC_scale_preferred      3    # The same, but the preferred SAC scale level. Level below are slightly, above strongly penalized
 assign   SAC_access_penalty       9000 # costfactor 9999 means the most horrible but allowed road., 
                                        # 100000=forbidden. This makes difference if forbidden way is the only option.
 assign  SAC_K1 0.05                    # Penalizing of SAC levels below preferred 
