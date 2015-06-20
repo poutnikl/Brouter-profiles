@@ -56,10 +56,10 @@ assign hr_preferred or prefer_hiking_routes stick_to_hiking_routes
 #see  http://wiki.openstreetmap.org/wiki/Key:sac_scale
 
 #SAC_scale_penalty:
-#Penalty is SAC_access_penalty                        for  SAC > SAC_scale_limit
-#Penalty is 0.0                                       for  SAC_scale_preferred = SAC, SAC <= SAC_scale_limit
-#Penalty is ( 1 + SAC_K1)^(SAC_scale_preferred - SAC) for  SAC_scale_preferred > SAC, SAC <= SAC_scale_limit
-#Penalty is ( 1 + SAC_K2)^(SAC - SAC_scale_preferred) for  SAC_scale_preferred < SAC, SAC <= SAC_scale_limit
+#Penalty is SAC_access_penalty                            for  SAC > SAC_scale_limit
+#Penalty is 0.0                                           for  SAC_scale_preferred = SAC, SAC <= SAC_scale_limit
+#Penalty is ( 1 + SAC_K1)^(SAC_scale_preferred - SAC) - 1 for  SAC_scale_preferred > SAC, SAC <= SAC_scale_limit
+#Penalty is ( 1 + SAC_K2)^(SAC - SAC_scale_preferred) - 1 for  SAC_scale_preferred < SAC, SAC <= SAC_scale_limit
 
 #extra complexity of code below, with adding +/- 1.0 
 #is to keep final penalties additive, even with multiplicative incremental penalty approach
