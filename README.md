@@ -9,7 +9,8 @@
 
 
 #### Profile development
-For reviewing development of my profile templates, and/or testing of not yet published versions, see repositories [Trekking-Poutnik](https://github.com/poutnikl/Trekking-Poutnik) and [Hiking-Poutnik](https://github.com/poutnikl/Hiking-Poutnik).
+* For reviewing development of my profile templates, and/or testing of not yet published versions, see repositories [Trekking-Poutnik](https://github.com/poutnikl/Trekking-Poutnik) and [Hiking-Poutnik](https://github.com/poutnikl/Hiking-Poutnik).
+* Note that the above "End user" profiles may be behind development version of the Trekking/Hiking-profile templates.
 
 
 
