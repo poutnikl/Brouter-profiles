@@ -1,0 +1,111 @@
+#
+# Shortest way allowed for pedestrains
+#
+
+---context:global   # following code refers to global config
+
+# the elevation parameters
+
+assign downhillcost 0
+assign downhillcutoff 1.5
+assign uphillcost 0
+assign uphillcutoff 1.5
+
+# use 0 if fallback to other cummunications is allowed if no suitable communication is found
+# use 1 if only path/footway/track or sidewalks are allowed
+# Be aware if strictfootways=1 then lack of suitable communication cause routing failure,
+# Incorrect/incomplete OSM mapping may cause false routing failure as well.
+
+assign strictfootways 0
+
+assign   validForFoot        1
+
+---context:way   # following code refers to way-tags
+
+assign any_cycleroute or route_bicycle_icn=yes or route_bicycle_ncn=yes or route_bicycle_rcn=yes route_bicycle_lcn=yes
+assign nodeaccessgranted or any_cycleroute lcn=yes
+
+assign turncost 0
+
+assign initialcost switch route=ferry 10000 0
+
+#
+# implicit access here just from the motorroad tag
+# (implicit access rules from highway tag handled elsewhere)
+#
+assign defaultaccess
+       switch access=
+              not motorroad=yes
+              switch or access=private access=no
+                     0
+                     1
+
+#
+# calculate logical bike access
+#
+assign bikeaccess
+       or any_cycleroute
+          switch bicycle=
+                 switch vehicle=
+                        defaultaccess
+                        switch or vehicle=private vehicle=no
+                               0
+                               1
+                 not or bicycle=private or bicycle=no bicycle=dismount
+
+#
+# calculate logical foot access
+#
+assign footaccess
+       or bikeaccess
+          or bicycle=dismount
+             switch foot=
+                    defaultaccess
+                    not or foot=private foot=no
+
+assign accesspenalty switch or bikeaccess footaccess 0 100000
+
+assign costfactor
+  add accesspenalty
+
+  switch and highway= not route=ferry  100000
+
+  switch    route=ferry                             5.67
+  switch or highway=motorway highway=motorway_link    100000
+  switch or highway=proposed highway=abandoned        100000
+  switch or highway=path|track|footway  sidewalk=left|right|both   1
+  switch strictfootways 10000
+  switch highway=residential|service|road   2
+  switch highway=unclassified|tertiary     3
+  5
+
+---context:node  # following code refers to node tags
+
+assign defaultaccess
+       switch access=
+              1 # add default barrier restrictions here!
+              switch or access=private access=no
+                     0
+                     1
+
+assign bikeaccess
+       or nodeaccessgranted=yes
+          switch bicycle=
+                 switch vehicle=
+                        defaultaccess
+                        switch or vehicle=private vehicle=no
+                               0
+                               1
+                 switch or bicycle=private or bicycle=no bicycle=dismount
+                        0
+                        1
+
+assign footaccess
+       or bicycle=dismount
+          switch foot=
+                 defaultaccess
+                 switch or foot=private foot=no
+                        0
+                        1
+
+assign initialcost switch or bikeaccess footaccess 0 1000000
