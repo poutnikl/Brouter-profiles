@@ -79,7 +79,7 @@ assign footaccess     or any_hiking_route
 assign accesspenalty switch footaccess 0 switch bikeaccess 0 100000
 
 
-assign costfactor switch or ismainroad ispaved 2.0 1.0
+assign costfactor switch or ismainroad or ispaved tracktype=grade1 2.0 1.0
 
  
 ---context:node  # following code refers to node tags
