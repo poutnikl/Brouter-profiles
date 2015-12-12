@@ -39,38 +39,39 @@ rem For non Europian counties, use suffix accordingly
 rem to applicable continent name used in http://download.osmand.net/rawindexes/
 set wsuffix=_europe_2.obf.zip
 
-
-
 rem folder where ZIpped map files areautomatically extracted
 set extractfolder=M:\OSMSH\
 
-
 cd /D %downloadfolder%
 
-rem Put rem before lines not needed temporarily
+rem Put "y" at the end of line to enable processing
+rem remove"y" at the end of line to temporary disable processing
 rem Remove lines not needed at all
 rem Add lines that are missing, based on naming convention at http://download.osmand.net/rawindexes/
 
+rem for tests, as it is small
+call :get Albania 0
 
-rem call :get Czech-republic
-call :get Czech-republic_partials
-rem call :get Austria
-rem call :get Slovakia
-rem call :get Hungary
-rem call :get Gb_england
-rem call :get Gb_england_partials
-rem call :get Netherlands
-rem call :get Netherlands_partials
-rem call :get Germany_partials
-rem call :get France_partials
-rem call :get Italy_partials
+
+call :get Czech-republic 
+call :get Czech-republic_partials 
+call :get Austria
+call :get Slovakia 
+call :get Hungary
+call :get Gb_england
+call :get Gb_england_partials
+call :get Netherlands
+call :get Netherlands_partials
+call :get Germany_partials
+call :get France_partials
+call :get Italy_partials
 
 
 if %debug%==yes pause
 exit /b
 
 :get
-
+if not %2==y exit /b
 if %1==Czech-republic_partials goto getCzech-republic 
 if %1==Germany_partials goto getGermany
 if %1==France_partials goto getFrance
