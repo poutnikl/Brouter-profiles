@@ -15,7 +15,8 @@ rem * http://www.7-zip.org
 rem * 
 rem ***********************************************************************
 
-set debug=false
+rem if set to yes, running has pause breakpoints to debug
+set debug=no
 
 set wget=S:\utils\GnuWin32\bin\wget.exe -N
 rem folder where ZIpped map files are downloaded
@@ -65,7 +66,7 @@ rem call :get France_partials
 rem call :get Italy_partials
 
 
-if %debug%==true pause
+if %debug%==yes pause
 exit /b
 
 :get
@@ -197,15 +198,15 @@ set localfile=%wprefix%%1%wsuffix%
 
 echo URL=%whost%%wprefix%%1%wsuffix%
 echo  localfile=%wprefix%%1%wsuffix%
-if %debug%==true pause
+if %debug%==yes pause
 %wget%  %URL%
-if %debug%==true pause
-if not %ExtractZipAfterDownload%==true exit /b
+if %debug%==yes pause
+if not %ExtractZipAfterDownload%==yes exit /b
 echo %zip% e %localfile% -o%extractfolder% -y
-if %debug%==true pause
+if %debug%==yes pause
 %zip% e %localfile% -o%extractfolder% -y
-if %debug%==true pause
+if %debug%==yes pause
 if not %DeleteZipAfterExtract%==yes exit /b
-if %debug%==true pause
+if %debug%==yes pause
 del %localfile%
 exit /b
