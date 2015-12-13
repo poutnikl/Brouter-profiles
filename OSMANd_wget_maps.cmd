@@ -44,13 +44,10 @@ set extractfolder=M:\OSMSH\
 
 cd /D %downloadfolder%
 
-rem Put "y" at the end of line to enable processing
-rem remove"y" at the end of line to temporary disable processing
+rem Put  "y" at the end of country map line to enable processing
+rem Remove "y" at the end of line to temporary disable processing
 rem Remove lines not needed at all
 rem Add lines that are missing, based on naming convention at http://download.osmand.net/rawindexes/
-
-rem for tests, as it is small
-call :get Albania 0
 
 
 call :get Czech-republic 
