@@ -44,31 +44,36 @@ set extractfolder=M:\OSMSH\
 
 cd /D %downloadfolder%
 
-rem Put  "y" at the end of country map line to enable processing
-rem Remove "y" at the end of line to temporary disable processing
+rem Remove rem at beginning the line to enable processing
+rem Put rem at beginning the line to temporary disable processing
 rem Remove lines not needed at all
-rem Add lines that are missing, based on naming convention at http://download.osmand.net/rawindexes/
+
+rem Add lines that are missing, 
+rem based on naming convention at http://download.osmand.net/rawindexes/
+
+rem for tests, as it is small
+call :get Albania 
 
 
-call :get Czech-republic 
-call :get Czech-republic_partials 
+call :get Czech-republic
+rem call :get Czech-republic_partials 
 call :get Austria
-call :get Slovakia 
-call :get Hungary
-call :get Gb_england
-call :get Gb_england_partials
-call :get Netherlands
-call :get Netherlands_partials
-call :get Germany_partials
-call :get France_partials
-call :get Italy_partials
+call :get Slovakia
+rem call :get Hungary
+rem call :get Gb_england
+rem call :get Gb_england_partials
+rem call :get Netherlands
+rem call :get Netherlands_partials
+rem call :get Germany_partials
+rem call :get France_partials
+rem call :get Italy_partials
 
 
-if %debug%==yes pause
+
 exit /b
 
 :get
-if not %2==y exit /b
+if %debug%==yes pause
 if %1==Czech-republic_partials goto getCzech-republic 
 if %1==Germany_partials goto getGermany
 if %1==France_partials goto getFrance
@@ -197,14 +202,20 @@ set localfile=%wprefix%%1%wsuffix%
 echo URL=%whost%%wprefix%%1%wsuffix%
 echo  localfile=%wprefix%%1%wsuffix%
 if %debug%==yes pause
+
 %wget%  %URL%
+
 if %debug%==yes pause
+
 if not %ExtractZipAfterDownload%==yes exit /b
 echo %zip% e %localfile% -o%extractfolder% -y
 if %debug%==yes pause
+
 %zip% e %localfile% -o%extractfolder% -y
 if %debug%==yes pause
+
 if not %DeleteZipAfterExtract%==yes exit /b
 if %debug%==yes pause
+
 del %localfile%
 exit /b
