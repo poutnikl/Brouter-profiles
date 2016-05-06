@@ -13,6 +13,9 @@
 
 #### Profile development
 
-* For reviewing development of my profile templates, and/or testing of not yet published versions, see repositories [Trekking-Poutnik](https://github.com/poutnikl/Trekking-Poutnik)
+* For reviewing development of my profile templates, 
+* and/or testing of not yet published versions,  see repositories 
+ 
+[Trekking-Poutnik](https://github.com/poutnikl/Trekking-Poutnik)
 [Hiking-Poutnik](https://github.com/poutnikl/Hiking-Poutnik)
 [Car-Profile](https://github.com/poutnikl/Car-Profile)
