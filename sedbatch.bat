@@ -52,11 +52,11 @@ cd .\wdir
 %sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             -0.5/g" Trekking-Poutnik.brf > Trekking-fast.brf
 %sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g"  Trekking-fast.brf >  Trekking-fast-wet.brf
 
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             1.0/g" Trekking-Poutnik.brf > auxiliary.brf
+%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             2.0/g" Trekking-Poutnik.brf > auxiliary.brf
 %sedexe% -b -e  "s/assign   smallpaved_factor      0.0/assign   smallpaved_factor      -0.5/g" auxiliary.brf > MTB.brf
 del auxiliary.brf
 
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             2.0/g" Trekking-Poutnik.brf > auxiliary.brf
+%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             1.0/g" Trekking-Poutnik.brf > auxiliary.brf
 %sedexe% -b -e  "s/assign   smallpaved_factor      0.0/assign   smallpaved_factor      -0.3/g" auxiliary.brf > MTB-light.brf
 del auxiliary.brf
 
