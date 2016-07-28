@@ -22,58 +22,50 @@ rem 2/  Install 7-zip from http://www.7-zip.org/download.html
 
 rem 3/  Set environment variables below to there pathnames ( junction \bin64 below is shortcut to "c:\Program files" )
 
-
+rem @echo on
 
 set sedexe=c:\cygwin64\bin\sed.exe
 set wgetexe=c:\cygwin64\bin\wget.exe
 set zipexe=C:\bin64\7-Zip\7z.exe
 
-md .\wdir
-cd .\wdir
+md .\sedwdir
+cd .\sedwdir
 
 %wgetexe% https://raw.githubusercontent.com/poutnikl/Trekking-Poutnik/master/Trekking-Poutnik.brf
 
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  0/g" Trekking-Poutnik.brf > Trekking-Dry.brf
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g" Trekking-Poutnik.brf > Trekking-Wet.brf
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             0.2/g" Trekking-Poutnik.brf > Trekking-MTB-light.brf
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             0.5/g" Trekking-Poutnik.brf > Trekking-MTB-medium.brf
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             1.0/g" Trekking-Poutnik.brf > Trekking-MTB-strong.brf
+copy Trekking-Poutnik.brf Trekking-Dry.brf
 
-%sedexe% -b -e  "s/assign   cycleroutes_pref       0.2/assign   cycleroutes_pref       0.0/g" Trekking-Poutnik.brf > Trekking-ICR.brf
+%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-Poutnik.brf > Trekking-Wet.brf
 
-%sedexe% -b -e  "s/assign   routelevel             2/assign   routelevel             4/g" Trekking-Poutnik.brf > Trekking-sameCR.brf
+%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\10.2/gi" Trekking-Poutnik.brf > Trekking-MTB-light.brf
+%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\10.5/gi" Trekking-Poutnik.brf > Trekking-MTB-medium.brf
+%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\11.0/gi" Trekking-Poutnik.brf > Trekking-MTB-strong.brf
+%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\1-0.5/gi" Trekking-Poutnik.brf > Trekking-Fast.brf
 
-%sedexe% -b -e  "s/assign   cycleroutes_pref       0.2/assign   cycleroutes_pref       0.6/g" Trekking-Poutnik.brf > Trekking-CR.brf
+%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-MTB-light.brf > Trekking-MTB-light-wet.brf
+%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-MTB-medium.brf > Trekking-MTB-medium-wet.brf
+%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-MTB-strong.brf >  Trekking-MTB-strong-wet.brf
+%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-Fast.brf >  Trekking-Fast-wet.brf
 
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g" Trekking-MTB-light.brf > Trekking-MTB-light-wet.brf
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g" Trekking-MTB-medium.brf > Trekking-MTB-medium-wet.brf
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g"  Trekking-MTB-strong.brf >  Trekking-MTB-strong-wet.brf
+%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\12.0/gi" Trekking-Poutnik.brf | %sedexe% -b -e  "s/\(assign\s\+smallpaved_factor\s\+\)0.0/\1-0.5/gI"  > MTB.brf
+%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\11.0/gi" Trekking-Poutnik.brf | %sedexe% -b -e  "s/\(assign\s\+smallpaved_factor\s\+\)0.0/\1-0.3/gI"  > MTB-light.brf
+%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" MTB.brf > MTB-wet.brf
+%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" MTB-light.brf > MTB-light-wet.brf
 
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             -0.5/g" Trekking-Poutnik.brf > Trekking-fast.brf
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g"  Trekking-fast.brf >  Trekking-fast-wet.brf
+%sedexe% -b -e  "s/\(assign\s\+cycleroutes_pref\s\+\)0.2/\10.0/gi" Trekking-Poutnik.brf > Trekking-ICR.brf
 
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             2.0/g" Trekking-Poutnik.brf > auxiliary.brf
-%sedexe% -b -e  "s/assign   smallpaved_factor      0.0/assign   smallpaved_factor      -0.5/g" auxiliary.brf > MTB.brf
-del auxiliary.brf
+%sedexe% -b -e  "s/\(assign\s\+routelevel\s\+\)2/\14/gi" Trekking-Poutnik.brf > Trekking-CRsame.brf
 
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             1.0/g" Trekking-Poutnik.brf > auxiliary.brf
-%sedexe% -b -e  "s/assign   smallpaved_factor      0.0/assign   smallpaved_factor      -0.3/g" auxiliary.brf > MTB-light.brf
-del auxiliary.brf
+%sedexe% -b -e  "s/\(assign\s\+cycleroutes_pref\s\+\)0.2/\10.6/gi" Trekking-Poutnik.brf > Trekking-FCR.brf
+%sedexe% -b -e  "s/\(assign\s\+routelevel\s\+\)2/\14/gi" Trekking-FCR.brf > Trekking-FCR-CRsame.brf
 
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g" MTB.brf > MTB-wet.brf
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g" MTB-light.brf > MTB-light-wet.brf
+%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\1-1.7/gi" Trekking-Poutnik.brf | %sedexe% -b -e  "s/\(assign\s\+smallpaved_factor\s\+\)0.0/\12.0/g" > Trekking-SmallRoads.brf
+%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-SmallRoads.brf > Trekking-SmallRoads-wet.brf
 
-%sedexe% -b -e  "s/assign   MTB_factor             0.0/assign   MTB_factor             -1.7/g" Trekking-Poutnik.brf > auxiliary.brf
-%sedexe% -b -e  "s/assign   smallpaved_factor      0.0/assign   smallpaved_factor      2.0/g" auxiliary.brf > Trekking-SmallRoads.brf
-del auxiliary.brf
-
-%sedexe% -b -e  "s/assign   iswet                  0/assign   iswet                  1/g" Trekking-SmallRoads.brf > Trekking-SmallRoads-wet.brf
+del Trekking-Poutnik.brf
 
 %zipexe% a ..\BR-Trekking-Profiles.zip *.brf
 
 del *.brf
 cd ..
-rd .\wdir
-
-
- 
+rd .\sedwdir
