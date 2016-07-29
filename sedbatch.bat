@@ -35,32 +35,39 @@ cd .\sedwdir
 
 copy Trekking-Poutnik.brf Trekking-Dry.brf
 
-%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-Poutnik.brf > Trekking-Wet.brf
 
-%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\10.2/gi" Trekking-Poutnik.brf > Trekking-MTB-light.brf
-%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\10.5/gi" Trekking-Poutnik.brf > Trekking-MTB-medium.brf
-%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\11.0/gi" Trekking-Poutnik.brf > Trekking-MTB-strong.brf
-%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\1-0.5/gi" Trekking-Poutnik.brf > Trekking-Fast.brf
+call :replace iswet 0 1 Trekking-Poutnik  Trekking-Wet
 
-%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-MTB-light.brf > Trekking-MTB-light-wet.brf
-%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-MTB-medium.brf > Trekking-MTB-medium-wet.brf
-%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-MTB-strong.brf >  Trekking-MTB-strong-wet.brf
-%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-Fast.brf >  Trekking-Fast-wet.brf
+call :replace MTB_factor 0.0 0.2 Trekking-Poutnik  Trekking-MTB-light
+call :replace MTB_factor 0.0 0.5 Trekking-Poutnik  Trekking-MTB-medium
+call :replace MTB_factor 0.0 1.0 Trekking-Poutnik  Trekking-MTB-strong
+call :replace MTB_factor 0.0 -0.5 Trekking-Poutnik  Trekking-Fast
 
-%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\12.0/gi" Trekking-Poutnik.brf | %sedexe% -b -e  "s/\(assign\s\+smallpaved_factor\s\+\)0.0/\1-0.5/gI"  > MTB.brf
-%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\11.0/gi" Trekking-Poutnik.brf | %sedexe% -b -e  "s/\(assign\s\+smallpaved_factor\s\+\)0.0/\1-0.3/gI"  > MTB-light.brf
-%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" MTB.brf > MTB-wet.brf
-%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" MTB-light.brf > MTB-light-wet.brf
+call :replace iswet 0 1 Trekking-MTB-light Trekking-MTB-light-wet
+call :replace iswet 0 1 Trekking-MTB-medium Trekking-MTB-medium-wet
+call :replace iswet 0 1 Trekking-MTB-strong Trekking-MTB-strong-wet
+call :replace iswet 0 1 Trekking-Fast Trekking-Fast-wet
 
-%sedexe% -b -e  "s/\(assign\s\+cycleroutes_pref\s\+\)0.2/\10.0/gi" Trekking-Poutnik.brf > Trekking-ICR.brf
+call :replace2 MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  Trekking-Poutnik MTB
+call :replace2 MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  Trekking-Poutnik MTB-light
 
-%sedexe% -b -e  "s/\(assign\s\+routelevel\s\+\)2/\14/gi" Trekking-Poutnik.brf > Trekking-CRsame.brf
+call :replace iswet 0 1 MTB MTB-wet
+call :replace iswet 0 1 MTB-light MTB-light-wet
 
-%sedexe% -b -e  "s/\(assign\s\+cycleroutes_pref\s\+\)0.2/\10.6/gi" Trekking-Poutnik.brf > Trekking-FCR.brf
-%sedexe% -b -e  "s/\(assign\s\+routelevel\s\+\)2/\14/gi" Trekking-FCR.brf > Trekking-FCR-CRsame.brf
+call :replace cycleroutes_pref 0.2 0.0 Trekking-Poutnik Trekking-ICR
+call :replace iswet 0 1 Trekking-ICR Trekking-ICR-wet
 
-%sedexe% -b -e  "s/\(assign\s\+MTB_factor\s\+\)0.0/\1-1.7/gi" Trekking-Poutnik.brf | %sedexe% -b -e  "s/\(assign\s\+smallpaved_factor\s\+\)0.0/\12.0/g" > Trekking-SmallRoads.brf
-%sedexe% -b -e  "s/\(assign\s\+iswet\s\+\)0/\11/gi" Trekking-SmallRoads.brf > Trekking-SmallRoads-wet.brf
+call :replace routelevel 2 4 Trekking-Poutnik Trekking-CRsame
+call :replace iswet 0 1 Trekking-CRsame Trekking-CRsame-wet
+
+call :replace cycleroutes_pref 0.2 0.6 Trekking-Poutnik Trekking-FCR
+call :replace iswet 0 1 Trekking-FCR Trekking-FCR-wet
+
+call :replace routelevel 2 4 Trekking-FCR Trekking-FCR-CRsame
+call :replace iswet 0 1 Trekking-FCR-CRsame Trekking-FCR-CRsame-wet
+
+call :replace2 MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 Trekking-Poutnik Trekking-SmallRoads
+call :replace iswet 0 1 Trekking-SmallRoads Trekking-SmallRoads-wet
 
 del Trekking-Poutnik.brf
 
@@ -69,3 +76,19 @@ del Trekking-Poutnik.brf
 del *.brf
 cd ..
 rd .\sedwdir
+
+exit /b
+
+:replace
+ rem parameters 1=keyword 2=oldvalue 3=newvalue 4=oldfile but ext 5=new file but ext
+echo %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %4.brf > %5.brf
+%sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %4.brf > %5.brf
+
+exit /b
+
+:replace2
+ rem parameters 1=keyword1 2=oldvalue1 3=newvalue2 4=keyword2 5=oldvalue2 6=newvalue2 7=oldfile but ext 8=new file but ext
+echo %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %7.brf  | %sedexe% -b -e  "s/\(assign\s\+%4\s\+\)%5/\1%6/gi" > %8.brf
+%sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %7.brf  | %sedexe% -b -e  "s/\(assign\s\+%4\s\+\)%5/\1%6/gi" > %8.brf
+
+exit /b
