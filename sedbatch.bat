@@ -100,6 +100,31 @@ call :replace avoid_motorways 0 1 Car-Eco Car-Eco-NoMotorway
 del %src%.brf
 
 rem ******************************************************
+rem     B R O U T E R   H I K I N G   P R O F I L E S
+rem ******************************************************
+
+%wgetexe% https://raw.githubusercontent.com/poutnikl/Hiking-Poutnik/master/Hiking.brf
+
+ren Hiking.brf Hiking-template.brf
+set src=Hiking-template
+
+call :replace2 SAC_scale_limit 3 1 SAC_scale_preferred 1 0 %src% Walking
+call :replace2 SAC_scale_limit 3 2 SAC_scale_preferred 1 1 %src% Hiking-SAC2
+call :replace2 SAC_scale_limit 3 3 SAC_scale_preferred 1 1 %src% Hiking-Mountain-SAC3
+call :replace2 SAC_scale_limit 3 4 SAC_scale_preferred 1 2 %src% Hiking-Alpine-SAC4
+call :replace2 SAC_scale_limit 3 5 SAC_scale_preferred 1 3 %src% Hiking-Alpine-SAC5
+call :replace2 SAC_scale_limit 3 6 SAC_scale_preferred 1 4 %src% Hiking-Alpine-SAC6
+
+call :replace iswet 0 1 Walking Walking-wet
+call :replace iswet 0 1 Hiking-SAC2 Hiking-SAC2-wet
+call :replace iswet 0 1 Hiking-Mountain-SAC3 Hiking-Mountain-SAC3-wet
+call :replace iswet 0 1 Hiking-Alpine-SAC4 Hiking-Alpine-SAC4-wet
+call :replace iswet 0 1 Hiking-Alpine-SAC5 Hiking-Alpine-SAC5-wet
+call :replace iswet 0 1 Hiking-Alpine-SAC6 Hiking-Alpine-SAC6-wet
+
+del %src%.brf
+
+rem ******************************************************
 rem                    C L O S I N G
 rem ******************************************************
 
