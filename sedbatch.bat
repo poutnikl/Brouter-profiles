@@ -1,7 +1,7 @@
 @echo off
 
-rem windows batch to automatically generate a bunch of Brouter profiles for bicycle
-rem based on the the profile template by Poutnik
+rem windows batch to automatically generate a bunch of Brouter profiles 
+rem based on the bike/car/foot profile templates by Poutnik
 
 rem Linux users should be easily able modify the batch to create the Linux sh script
 rem as I am not good in unix shell scripts.
@@ -31,45 +31,77 @@ set zipexe=C:\bin64\7-Zip\7z.exe
 md .\sedwdir
 cd .\sedwdir
 
+rem ******************************************************
+rem     B R O U T E R   B I C Y C L E   P R O F I L E S
+rem ******************************************************
+
 %wgetexe% https://raw.githubusercontent.com/poutnikl/Trekking-Poutnik/master/Trekking-Poutnik.brf
 
-copy Trekking-Poutnik.brf Trekking-Dry.brf
+set src=Trekking-Poutnik
 
+copy %src%.brf Trekking-Dry.brf
 
-call :replace iswet 0 1 Trekking-Poutnik  Trekking-Wet
+call :replace iswet 0 1 %src% Trekking-Wet
 
-call :replace MTB_factor 0.0 0.2 Trekking-Poutnik  Trekking-MTB-light
-call :replace MTB_factor 0.0 0.5 Trekking-Poutnik  Trekking-MTB-medium
-call :replace MTB_factor 0.0 1.0 Trekking-Poutnik  Trekking-MTB-strong
-call :replace MTB_factor 0.0 -0.5 Trekking-Poutnik  Trekking-Fast
+call :replace MTB_factor 0.0 0.2 %src%  Trekking-MTB-light
+call :replace MTB_factor 0.0 0.5 %src%  Trekking-MTB-medium
+call :replace MTB_factor 0.0 1.0 %src%  Trekking-MTB-strong
+call :replace MTB_factor 0.0 -0.5 %src%  Trekking-Fast
 
 call :replace iswet 0 1 Trekking-MTB-light Trekking-MTB-light-wet
 call :replace iswet 0 1 Trekking-MTB-medium Trekking-MTB-medium-wet
 call :replace iswet 0 1 Trekking-MTB-strong Trekking-MTB-strong-wet
 call :replace iswet 0 1 Trekking-Fast Trekking-Fast-wet
 
-call :replace2 MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  Trekking-Poutnik MTB
-call :replace2 MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  Trekking-Poutnik MTB-light
+call :replace2 MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  %src% MTB
+call :replace2 MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  %src% MTB-light
 
 call :replace iswet 0 1 MTB MTB-wet
 call :replace iswet 0 1 MTB-light MTB-light-wet
 
-call :replace cycleroutes_pref 0.2 0.0 Trekking-Poutnik Trekking-ICR
+call :replace cycleroutes_pref 0.2 0.0 %src% Trekking-ICR
 call :replace iswet 0 1 Trekking-ICR Trekking-ICR-wet
 
-call :replace routelevel 2 4 Trekking-Poutnik Trekking-CRsame
+call :replace routelevel 2 4 %src% Trekking-CRsame
 call :replace iswet 0 1 Trekking-CRsame Trekking-CRsame-wet
 
-call :replace cycleroutes_pref 0.2 0.6 Trekking-Poutnik Trekking-FCR
+call :replace cycleroutes_pref 0.2 0.6 %src% Trekking-FCR
 call :replace iswet 0 1 Trekking-FCR Trekking-FCR-wet
 
 call :replace routelevel 2 4 Trekking-FCR Trekking-FCR-CRsame
 call :replace iswet 0 1 Trekking-FCR-CRsame Trekking-FCR-CRsame-wet
 
-call :replace2 MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 Trekking-Poutnik Trekking-SmallRoads
+call :replace2 MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 %src% Trekking-SmallRoads
 call :replace iswet 0 1 Trekking-SmallRoads Trekking-SmallRoads-wet
 
-del Trekking-Poutnik.brf
+del %src%.brf
+
+rem ******************************************************
+rem     B R O U T E R   C A R   P R O F I L E S
+rem ******************************************************
+
+%wgetexe% https://raw.githubusercontent.com/poutnikl/Car-Profile/master/Car-test-Template.brf
+set src=Car-test-Template
+
+copy %src%.brf Car-Fast.brf
+
+call :replace drivestyle 3 2 %src%% Car-FastEco
+call :replace drivestyle 3 1 %src%% Car-Eco
+call :replace drivestyle 3 0 %src%% Car-Short
+
+call :replace avoid_toll 0 1 Car-Fast Car-Fast-TollFree
+call :replace avoid_toll 0 1 Car-FastEco Car-FastEco-TollFree
+call :replace avoid_toll 0 1 Car-Eco Car-Eco-TollFree
+
+call :replace avoid_motorways 0 1 Car-Fast Car-Fast-NoMotorway
+call :replace avoid_motorways 0 1 Car-FastEco Car-FastEco-NoMotorway
+call :replace avoid_motorways 0 1 Car-Eco Car-Eco-NoMotorway
+
+del %src%.brf
+
+rem ******************************************************
+rem                    C L O S I N G
+rem ******************************************************
 
 %zipexe% a ..\BR-Trekking-Profiles.zip *.brf
 
@@ -78,6 +110,10 @@ cd ..
 rd .\sedwdir
 
 exit /b
+
+rem ******************************************************
+rem     E X E C U T I V E    S U B R O U T I N E S
+rem ******************************************************
 
 :replace
  rem parameters 1=keyword 2=oldvalue 3=newvalue 4=oldfile but ext 5=new file but ext
