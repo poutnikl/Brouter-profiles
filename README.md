@@ -1,8 +1,10 @@
 
-#### The list of my end user profiles for Android Brouter routing application.
+#### My end user Trekking/Hiking/car profiles for Android Brouter routing application.
 
-* Click on the profile of your interest, click on the RAW button and either copy the content either save the .BRF file locally.
+* Download the [ZIP Archive BR-Trekking-profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Trekking-Profiles.zip) containing all the profiles and trasfer the profiles of the interest to Profiles2 subfolder of BRouter folders.
  
+* You can generate this ZIP anytime from the latest profile template downloading and running this [Windows sedbatch.bat on GitHub](https://raw.githubusercontent.com/poutnikl/Brouter-profiles/master/sedbatch.bat), but it has its prerequisities of presence and provided location of sed.exe, wget.exe az 7z.exe utilities.
+
 * You can test the profiles online on [Brouter-web/](http://brouter.de/brouter-web/) by pasting their text content to bottom left paste field + pressing UPLOAD button. It then appears as Custom profile, aside of predefined ones.
 
 * Notice the comments at bottom of profile text.
