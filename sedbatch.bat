@@ -28,12 +28,52 @@ set sedexe=c:\cygwin64\bin\sed.exe
 set wgetexe=c:\cygwin64\bin\wget.exe
 set zipexe=C:\bin64\7-Zip\7z.exe
 
+
+
 md .\sedwdir
 cd .\sedwdir
+
+if "%*"=="" goto :legend
+if /i "%*"=="all" goto :all
+
+:shiftloop
+
+if /i "%1"=="car" call :car
+if /i "%1"=="bike" call :bike
+if /i "%1"=="foot" call :foot
+shift
+if not "%1"=="" goto :shiftloop
+goto :closing
+
+rem ******************************************************
+rem                     A L L
+rem ******************************************************
+
+:all
+call :car
+call :bike
+call :foot
+goto :closing
+
+
+rem ******************************************************
+rem                     L E G E N D
+rem ******************************************************
+
+:legend
+
+echo Launch the batch file %0 as "%0 [car] [bike] [foot]", or "%0 all" , where [] means optional
+echo E.g. "%0 all" generates all  car + bike + foot profile packages
+echo "%0 car" generates the car package, "%0 foot bike" generates foot and bike packages.
+echo In contrary to previous %1 version, it generates independent packages for car/bike/foot profiles
+pause
+goto :closing
 
 rem ******************************************************
 rem     B R O U T E R   B I C Y C L E   P R O F I L E S
 rem ******************************************************
+
+:bike
 
 %wgetexe% https://raw.githubusercontent.com/poutnikl/Trekking-Poutnik/master/Trekking-Poutnik.brf
 
@@ -76,9 +116,16 @@ call :replace iswet 0 1 Trekking-SmallRoads Trekking-SmallRoads-wet
 
 del %src%.brf
 
+%zipexe% a ..\BR-Bike-Profiles.zip *.brf
+del *.brf
+
+exit /b
+
 rem ******************************************************
 rem     B R O U T E R   C A R   P R O F I L E S
 rem ******************************************************
+
+:car
 
 %wgetexe% https://raw.githubusercontent.com/poutnikl/Car-Profile/master/Car-test-Template.brf
 set src=Car-test-Template
@@ -99,9 +146,16 @@ call :replace avoid_motorways 0 1 Car-Eco Car-Eco-NoMotorway
 
 del %src%.brf
 
+%zipexe% a ..\BR-Car-Profiles.zip *.brf
+del *.brf
+
+exit /b
+
 rem ******************************************************
 rem     B R O U T E R   H I K I N G   P R O F I L E S
 rem ******************************************************
+
+:foot
 
 %wgetexe% https://raw.githubusercontent.com/poutnikl/Hiking-Poutnik/master/Hiking.brf
 
@@ -124,11 +178,16 @@ call :replace iswet 0 1 Hiking-Alpine-SAC6 Hiking-Alpine-SAC6-wet
 
 del %src%.brf
 
+%zipexe% a ..\BR-Foot-Profiles.zip *.brf
+del *.brf
+
+exit /b
+
 rem ******************************************************
 rem                    C L O S I N G
 rem ******************************************************
 
-%zipexe% a ..\BR-Trekking-Profiles.zip *.brf
+:closing
 
 del *.brf
 cd ..
@@ -142,14 +201,14 @@ rem ******************************************************
 
 :replace
  rem parameters 1=keyword 2=oldvalue 3=newvalue 4=oldfile but ext 5=new file but ext
-echo %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %4.brf > %5.brf
+rem echo %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %4.brf > %5.brf
 %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %4.brf > %5.brf
 
 exit /b
 
 :replace2
  rem parameters 1=keyword1 2=oldvalue1 3=newvalue2 4=keyword2 5=oldvalue2 6=newvalue2 7=oldfile but ext 8=new file but ext
-echo %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %7.brf  | %sedexe% -b -e  "s/\(assign\s\+%4\s\+\)%5/\1%6/gi" > %8.brf
+rem echo %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %7.brf  | %sedexe% -b -e  "s/\(assign\s\+%4\s\+\)%5/\1%6/gi" > %8.brf
 %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %7.brf  | %sedexe% -b -e  "s/\(assign\s\+%4\s\+\)%5/\1%6/gi" > %8.brf
 
 exit /b
