@@ -1,5 +1,5 @@
 
-#### My end user Trekking/Hiking/car profiles for Android Brouter routing application.
+#### My end user BRouter profiles for bicycles/hiking and cars profiles
 
 * Download the ZIP archive below, unpack it and transfer profiles of the interest to your Profiles2 subfolder of BRouter application.
  
@@ -7,9 +7,9 @@
     * [BR-Car-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Car-Profiles.zip)
     * [BR-Foot-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Foot-Profiles.zip)
 
-* You can test the profiles online on [Brouter-web/](http://brouter.de/brouter-web/) by pasting their text content to bottom left paste field + pressing UPLOAD button. It then appears as Custom profile, aside of predefined ones.
+* You can test the profiles online on [Brouter-web frontend](http://brouter.de/brouter-web/) by pasting their text content to bottom left paste field + pressing UPLOAD button. It then appears as Custom profile, aside of predefined ones.
  
-* Notice the comments at bottom of profile text.
+* Notice the changelog comments at top and bottom of the profile code.
 
 * @abrensch @nrenner  Feel free to refer to this collection in your resources, or use profiles in Brouter-web / Brouter application.
 
