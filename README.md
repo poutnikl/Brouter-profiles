@@ -1,14 +1,19 @@
 
 #### My end user Trekking/Hiking/car profiles for Android Brouter routing application.
 
-* Download the Archive BR-XXXX-profiles.zip containing all the XXXX profiles and transfer the profiles of the interest to your Profiles2 subfolder of BRouter folders.
+* Download the ZIP archive below, unpack it and transfer profiles of the interest to your Profiles2 subfolder of BRouter application.
  
-* Aside of downloading rleased profiles, you can generate those ZIPs anytime from the latest profile templates if on Windows.
+* * [BR-Bike-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Bike-Profiles.zip)
+* * [BR-Car-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Car-Profiles.zip)
+* * [BR-Foot-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Foot-Profiles.zip)
+
+* You can test the profiles online on [Brouter-web/](http://brouter.de/brouter-web/) by pasting their text content to bottom left paste field + pressing UPLOAD button. It then appears as Custom profile, aside of predefined ones.
+ 
+* Aside of downloading released profiles, you can generate those ZIPs anytime from the latest profile templates if on Windows.
 * Download this [Windows batchfile on GitHub](https://raw.githubusercontent.com/poutnikl/Brouter-profiles/master/sedbatch.bat)
 * check its prerequisitiesof presence and provided location of sed.exe, wget.exe az 7z.exe utilities.
 * run it as "sedbatch all" or just e.g. "sedbatch car" "sedbatch bike" or "sedbatch bike foot"
 
-* You can test the profiles online on [Brouter-web/](http://brouter.de/brouter-web/) by pasting their text content to bottom left paste field + pressing UPLOAD button. It then appears as Custom profile, aside of predefined ones.
 
 * Notice the comments at bottom of profile text.
 
