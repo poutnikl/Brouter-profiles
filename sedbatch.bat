@@ -30,7 +30,7 @@ set zipexe=C:\bin64\7-Zip\7z.exe
 
 
 
-md .\sedwdir
+if not exist .\sedwdir md .\sedwdir
 cd .\sedwdir
 
 if "%*"=="" goto :legend
@@ -116,8 +116,8 @@ call :replace iswet 0 1 Trekking-SmallRoads Trekking-SmallRoads-wet
 
 del %src%.brf
 
-%zipexe% a ..\BR-Bike-Profiles.zip *.brf
-del *.brf
+if exist %zipexe%  %zipexe% a ..\BR-Bike-Profiles.zip *.brf
+if exist %zipexe%  del *.brf
 
 exit /b
 
@@ -146,8 +146,8 @@ call :replace avoid_motorways 0 1 Car-Eco Car-Eco-NoMotorway
 
 del %src%.brf
 
-%zipexe% a ..\BR-Car-Profiles.zip *.brf
-del *.brf
+if exist %zipexe%  %zipexe% a ..\BR-Car-Profiles.zip *.brf
+if exist %zipexe%  del *.brf
 
 exit /b
 
@@ -178,8 +178,8 @@ call :replace iswet 0 1 Hiking-Alpine-SAC6 Hiking-Alpine-SAC6-wet
 
 del %src%.brf
 
-%zipexe% a ..\BR-Foot-Profiles.zip *.brf
-del *.brf
+if exist %zipexe%  %zipexe% a ..\BR-Foot-Profiles.zip *.brf
+if exist %zipexe%  del *.brf
 
 exit /b
 
@@ -189,9 +189,19 @@ rem ******************************************************
 
 :closing
 
+if not exist %zipexe%  goto :no7zip 
 del *.brf
 cd ..
 rd .\sedwdir
+
+exit /b
+
+:no7zip
+echo As 7zip exe location is not set, profiles are left in sedwdir subfolder.
+dir *.brf /w
+cd ..
+pause
+
 
 exit /b
 
@@ -200,15 +210,14 @@ rem     E X E C U T I V E    S U B R O U T I N E S
 rem ******************************************************
 
 :replace
+
  rem parameters 1=keyword 2=oldvalue 3=newvalue 4=oldfile but ext 5=new file but ext
-rem echo %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %4.brf > %5.brf
 %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %4.brf > %5.brf
 
 exit /b
 
 :replace2
  rem parameters 1=keyword1 2=oldvalue1 3=newvalue2 4=keyword2 5=oldvalue2 6=newvalue2 7=oldfile but ext 8=new file but ext
-rem echo %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %7.brf  | %sedexe% -b -e  "s/\(assign\s\+%4\s\+\)%5/\1%6/gi" > %8.brf
 %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %7.brf  | %sedexe% -b -e  "s/\(assign\s\+%4\s\+\)%5/\1%6/gi" > %8.brf
 
 exit /b
