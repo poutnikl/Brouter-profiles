@@ -3,9 +3,9 @@
 
 * Download the ZIP archive below, unpack it and transfer profiles of the interest to your Profiles2 subfolder of BRouter application.
  
-* * [BR-Bike-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Bike-Profiles.zip)
-* * [BR-Car-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Car-Profiles.zip)
-* * [BR-Foot-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Foot-Profiles.zip)
+    * [BR-Bike-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Bike-Profiles.zip)
+    * [BR-Car-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Car-Profiles.zip)
+    * [BR-Foot-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Foot-Profiles.zip)
 
 * You can test the profiles online on [Brouter-web/](http://brouter.de/brouter-web/) by pasting their text content to bottom left paste field + pressing UPLOAD button. It then appears as Custom profile, aside of predefined ones.
  
