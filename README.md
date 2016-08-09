@@ -13,7 +13,9 @@
 
 * @abrensch @nrenner  Feel free to refer to this collection in your resources, or use profiles in Brouter-web / Brouter application.
 
-* See more here [Brouter-profiles-collection](../../wiki/Brouter-profiles-collection).  
+* See more here
+    * [Brouter-profiles-collection](../../wiki/Brouter-profiles-collection).  
+    * [Brouter profiles wiki pages](https://github.com/poutnikl/Brouter-profiles/wiki)
 
 #### Profile development
 
