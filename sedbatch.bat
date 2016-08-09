@@ -65,7 +65,7 @@ rem ******************************************************
 echo Launch the batch file %0 as "%0 [car] [bike] [foot]", or "%0 all" , where [] means optional
 echo E.g. "%0 all" generates all  car + bike + foot profile packages
 echo "%0 car" generates the car package, "%0 foot bike" generates foot and bike packages.
-echo In contrary to previous %1 version, it generates independent packages for car/bike/foot profiles
+echo In contrary to previous %0 version, it generates independent packages for car/bike/foot profiles
 pause
 goto :closing
 
@@ -99,8 +99,8 @@ call :replace2 MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  %src% MTB-light
 call :replace iswet 0 1 MTB MTB-wet
 call :replace iswet 0 1 MTB-light MTB-light-wet
 
-call :replace cycleroutes_pref 0.2 0.0 %src% Trekking-ICR
-call :replace iswet 0 1 Trekking-ICR Trekking-ICR-wet
+call :replace cycleroutes_pref 0.2 0.0 %src% Trekking-ICR-dry
+call :replace iswet 0 1 Trekking-ICR-dry Trekking-ICR-wet
 
 call :replace routelevel 2 4 %src% Trekking-CRsame
 call :replace iswet 0 1 Trekking-CRsame Trekking-CRsame-wet
