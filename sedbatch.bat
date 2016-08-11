@@ -221,3 +221,9 @@ exit /b
 %sedexe% -b -e  "s/\(assign\s\+%1\s\+\)%2/\1%3/gi" %7.brf  | %sedexe% -b -e  "s/\(assign\s\+%4\s\+\)%5/\1%6/gi" > %8.brf
 
 exit /b
+
+:setlegend
+ rem parameters 1=profilename 2=Legend-text-on-single-line
+%sedexe% -b -e  "s/<LEGEND>/%1: %2/g" %1.brf > %1.brf
+
+exit /b
