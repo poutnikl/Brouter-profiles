@@ -1,0 +1,14 @@
+Profile name,  Profile description ( generated )   
+Car-Fast.brf, Fast Car profile, estimating the fastest routes, possible with booth or vignette tolls  
+Car-Eco.brf, Economic Car profile, fuel saving. May be slow, as consuption minimum speed range is typically 60-80 km per h  
+Car-FastEco.brf, Economic but Fast Car profile, balancing speed and cost. RECOMMENDED  
+Car-Short.brf, Car profile, shorted ways, useless unless for technical emergency.  
+Car-Fast-Locus.brf, Locus edition, Fast Car profile, estimating the fastest routes, possible with booth or vignette tolls  
+Car-FastEco-Locus.brf, Locus edition, Economic but Fast Car profile, balancing speed and cost of Fast and Eco. RECOMMENDED  
+Car-Eco-Locus.brf, Locus edition, Economic Car profile, fuel saving. May be slow, as consuption minimum speed range is typically 60-80 km per h  
+Car-Fast-TollFree.brf, Toll free, Fast Car profile  
+Car-FastEco-TollFree.brf, Toll free, Economic but Fast Car profile, balancing speed and cost of Fast and Eco. RECOMMENDED  
+Car-Eco-TollFree.brf, Toll free, Economic Car profile, fuel saving. May be slow, as consuption minimum speed range is typically 60-80 km per h  
+Car-Fast-NoMotorway.brf, Fast Car profile, Avoiding motorways\/motorroads  
+Car-FastEco-NoMotorway.brf, Economic but Fast Car profile, balancing speed and cost of Fast and Eco. Avoiding motorways\/motorroads, RECOMMENDED  
+Car-Eco-NoMotorway.brf, Economic Car profile, fuel saving, Avoiding motorways\/motorroads, May be slow.  
