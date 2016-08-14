@@ -1,5 +1,5 @@
 
-#### My profiles for bicycle/hiking/car Brouter routing offline service for Android ( supporting OSMAnd, LocusMap, OruxMaps )
+#### My profiles for bicycle/hiking/car Brouter routing
 
 * Download the ZIP archive below, unpack it and transfer profiles of the interest to your Profiles2 subfolder of BRouter application.
  
