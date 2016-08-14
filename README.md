@@ -5,7 +5,7 @@
  
     * [BR-Bike-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Bike-Profiles.zip) / [BR-Car-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Car-Profiles.zip) / [BR-Foot-Profiles](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Foot-Profiles.zip)
      
-    * You may download the full depository content at [Download .zip](https://github.com/poutnikl/Brouter-profiles/zipball/master) or [Download .tar.gz](https://github.com/poutnikl/Brouter-profiles/tarball/master)
+    * You may download the full depository content at [http://poutnikl.github.io/Brouter-profiles/](http://poutnikl.github.io/Brouter-profiles/)
 
 * You can test the profiles online on [Brouter-web frontend](http://brouter.de/brouter-web/) by pasting their text content to bottom left paste field + pressing UPLOAD button. It then appears as Custom profile, aside of predefined ones. Notice the changelog comments at top and bottom of the profile code.
 
