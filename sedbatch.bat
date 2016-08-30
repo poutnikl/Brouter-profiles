@@ -156,19 +156,42 @@ Echo Profile name,  Profile description ( generated )  >%legfile%
 call :replaceone avoid_toll      0 1 %src% %src%-TollFree
 call :replaceone avoid_motorways 0 1 %src% %src%-NoMotorway
 call :replaceone avoid_unpaved   0 1 %src% %src%-NoUnpaved
+
 call :replaceone drivestyle 2 3 %src%  Car-Fast                "Car profile going for Speed - possible with booth or vignette tolls"
 call :replaceone drivestyle 2 1 %src%  Car-Eco                 "Economic Car profile, fuel saving. Possible with booth or vignette tolls. May be slow."
 call :replaceone drivestyle 2 2 %src%  Car-FastEco             "Car profile balancing Speed and Cost - RECOMMENDED"
 call :replaceone drivestyle 2 0 %src%  Car-Short               "Car profile, shortest route, probably useless unless for technical emergency."
-call :replaceone drivestyle 2 3 %src%-TollFree  Car-Fast-TollFree      "Toll free, Car profile going for Speed"
-call :replaceone drivestyle 2 2 %src%-TollFree  Car-FastEco-TollFree   "Toll free, Car profile balancing Speed and Cost - RECOMMENDED"
-call :replaceone drivestyle 2 1 %src%-TollFree  Car-Eco-TollFree       "Toll free, Car profile going for low cost - May be slow, as low cost speed is 60-80 km per h"
-call :replaceone drivestyle 2 3 %src%-NoMotorway   Car-Fast-NoMotorway       "Car profile going for Speed - Avoiding motorways\/motorroads"
-call :replaceone drivestyle 2 2 %src%-NoMotorway  Car-FastEco-NoMotorway    "Car profile balancing Speed and Cost - Avoiding motorways\/motorroads, RECOMMENDED"
-call :replaceone drivestyle 2 1 %src%-NoMotorway   Car-Eco-NoMotorway        "Economic Car profile, fuel saving, Avoiding motorways\/motorroads, May be slow."
-call :replaceone drivestyle 2 3 %src%-NoUnpaved  Car-Fast-NoUnpaved      "Car profile going for Speed - Avoiding unpaved ways"
-call :replaceone drivestyle 2 2 %src%-NoUnpaved Car-FastEco-NoUnpaved   "Car profile balancing Speed and Cost - Avoiding unpaved ways"
-call :replaceone drivestyle 2 1 %src%-NoUnpaved  Car-Eco-NoUnpaved       "Car profile going for low cost - Avoiding unpaved ways - May be slow."
+
+call :replaceone drivestyle 2 3 %src%-TollFree    Car-Fast-TollFree      "Toll free, Car profile going for Speed"
+call :replaceone drivestyle 2 2 %src%-TollFree    Car-FastEco-TollFree   "Toll free, Car profile balancing Speed and Cost - RECOMMENDED"
+call :replaceone drivestyle 2 1 %src%-TollFree    Car-Eco-TollFree       "Toll free, Car profile going for low cost - May be slow, as low cost speed is 60-80 km per h"
+
+call :replaceone drivestyle 2 3 %src%-NoMotorway  Car-Fast-NoMotorway    "Car profile going for Speed - Avoiding motorways\/motorroads"
+call :replaceone drivestyle 2 2 %src%-NoMotorway  Car-FastEco-NoMotorway "Car profile balancing Speed and Cost - Avoiding motorways\/motorroads, RECOMMENDED"
+call :replaceone drivestyle 2 1 %src%-NoMotorway  Car-Eco-NoMotorway     "Economic Car profile, fuel saving, Avoiding motorways\/motorroads, May be slow."
+
+call :replaceone drivestyle 2 3 %src%-NoUnpaved   Car-Fast-NoUnpaved     "Car profile going for Speed - Avoiding unpaved ways"
+call :replaceone drivestyle 2 2 %src%-NoUnpaved   Car-FastEco-NoUnpaved  "Car profile balancing Speed and Cost - Avoiding unpaved ways"
+call :replaceone drivestyle 2 1 %src%-NoUnpaved   Car-Eco-NoUnpaved      "Car profile going for low cost - Avoiding unpaved ways - May be slow."
+
+call :replacetwo drivestyle 2 3  road_restriction 1 3  %src%           Car-Fast-NoMinorRoads            "Fast profile avoiding unpaved and minor paved roads"
+call :replacetwo drivestyle 2 3  road_restriction 1 3  %src%-TollFree  Car-Fast-TollFree-NoMinorRoads   "Fast tollfree profile avoiding unpaved and minor paved roads"
+
+call :replacetwo drivestyle 2 3  road_restriction 1 4  %src%           Car-Fast-TertiaryRoads           "Fast long distance profile following tertiary and better roads"
+call :replacetwo drivestyle 2 3  road_restriction 1 4  %src%-TollFree  Car-Fast-TollFree-TertiaryRoads  "Fast tollfree long distance profile following tertiary and better roads"
+
+call :replacetwo drivestyle 2 3  road_restriction 1 5  %src%           Car-Fast-SecondaryRoads           "Fast long distance profile following secondary and better roads"
+call :replacetwo drivestyle 2 3  road_restriction 1 5  %src%-TollFree  Car-Fast-TollFree-SecondaryRoads  "Fast tollfree long distance profile following secondary and better roads"
+
+call :replacetwo drivestyle 2 2  road_restriction 1 3  %src%           Car-FastEco-NoMinorRoads            "FastEco profile avoiding unpaved and minor paved roads"
+call :replacetwo drivestyle 2 2  road_restriction 1 3  %src%-TollFree  Car-FastEco-TollFree-NoMinorRoads   "FastEco tollfree profile avoiding unpaved and minor paved roads"
+
+call :replacetwo drivestyle 2 2  road_restriction 1 4  %src%           Car-FastEco-TertiaryRoads           "FastEco long distance profile following tertiary and better roads"
+call :replacetwo drivestyle 2 2  road_restriction 1 4  %src%-TollFree  Car-FastEco-TollFree-TertiaryRoads  "FastEco tollfree long distance profile following tertiary and better roads"
+
+call :replacetwo drivestyle 2 2  road_restriction 1 5  %src%           Car-FastEco-SecondaryRoads           "FastEco long distance profile following secondary and better roads"
+call :replacetwo drivestyle 2 2  road_restriction 1 5  %src%-TollFree  Car-FastEco-TollFree-SecondaryRoads  "FastEco tollfree long distance profile following secondary and better roads"
+
 
 goto :closing
 
