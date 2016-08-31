@@ -218,6 +218,10 @@ if exist %legfile% del %legfile%
 Echo Profile name,  Profile description ( generated )  >%legfile% 
 
 call :replaceone iswet 0 1 %src% %src%-wet
+rem StrongHikingRoutePreference  SHRP
+call :replaceone  hiking_routes_preference  0.20 0.60 %src% %src%-SHRP
+rem VeryStrongHikingRoutePreference  VSHRP
+call :replaceone  hiking_routes_preference  0.20 2.00 %src% %src%-VSHRP
 
 call :replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 %src%  Walking "SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard"
 call :replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 %src%  Hiking-SAC2 "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness"
@@ -226,12 +230,27 @@ call :replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 %src%  Hiking-Alpin
 call :replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 %src%  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope"
 call :replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 %src%  Hiking-Alpine-SAC6 "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment"
 
+call :replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 %src%-SHRP  Walking-SAC1-SHRP "SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard, Strong Hiking Route Preference"
+call :replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 %src%-SHRP  Hiking-SAC2-SHRP "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness, Strong Hiking Route Preference"
+call :replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 %src%-SHRP  Hiking-Mountain-SAC3-SHRP "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience, Strong Hiking Route Preference "
+call :replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 %src%-SHRP  Hiking-Alpine-SAC4-SHRP "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience, Strong Hiking Route Preference"
+call :replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 %src%-SHRP  Hiking-Alpine-SAC5-SHRP "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope, Strong Hiking Route Preference"
+call :replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 %src%-SHRP  Hiking-Alpine-SAC6-SHRP "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment, Strong Hiking Route Preference"
+
+call :replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 %src%-VSHRP  Walking-SAC1-VSHRP "SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard, VERY Strong Hiking Route Preference"
+call :replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 %src%-VSHRP  Hiking-SAC2-VSHRP "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness, VERY Strong Hiking Route Preference"
+call :replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 %src%-VSHRP  Hiking-Mountain-SAC3-VSHRP "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience, VERY Strong Hiking Route Preference "
+call :replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 %src%-VSHRP  Hiking-Alpine-SAC4-VSHRP "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience, VERY Strong Hiking Route Preference"
+call :replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 %src%-VSHRP  Hiking-Alpine-SAC5-VSHRP "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope, VERY Strong Hiking Route Preference"
+call :replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 %src%-VSHRP  Hiking-Alpine-SAC6-VSHRP "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment, VERY Strong Hiking Route Preference"
+
+
 call :replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 %src%-wet  Walking "SAC T1 - hiking - Wet variant"
-call :replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 %src%-wet  Hiking-SAC2 "SAC T2 - mountain_hiking - Wet variant"
-call :replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 %src%-wet  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - Wet variant"
-call :replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 %src%-wet  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - Wet variant"
-call :replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 %src%-wet  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - Wet variant"
-call :replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 %src%-wet  Hiking-Alpine-SAC6 "SAC T6 - difficult_alpine_hiking - Wet variant"
+rem call :replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 %src%-wet  Hiking-SAC2 "SAC T2 - mountain_hiking - Wet variant"
+rem call :replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 %src%-wet  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - Wet variant"
+rem call :replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 %src%-wet  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - Wet variant"
+rem call :replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 %src%-wet  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - Wet variant"
+rem call :replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 %src%-wet  Hiking-Alpine-SAC6 "SAC T6 - difficult_alpine_hiking - Wet variant"
 
 goto :closing
 
