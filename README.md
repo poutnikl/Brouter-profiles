@@ -2,7 +2,7 @@
 #### Poutnik's profiles for bicycle/hiking/car routing via BRouter ( [Android application](https://play.google.com/store/apps/details?id=btools.routingapp&hl=en_GB) or [Web Frontend](http://brouter.de/brouter-web/) 
 
 * To get respective profiles, 
-      * download relevant ZIP archive [BR-Bike-ProfilesMain](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Bike-ProfilesMain.zip) / [BR-Car-ProfilesMain](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Car-ProfilesMain.zip) / [BR-Foot-ProfilesMain](https://github.com/poutnikl/Brouter-profiles/raw/master/BR-Foot-ProfilesMain.zip),
+      * download relevant ZIP archive BR-Bike-ProfilesMain /BR-Car-ProfilesMain / BR-Foot-ProfilesMain
       * unpack it
       * review the added legend file and related wiki pages
       * transfer chosen profiles to the Profiles2 subfolder of BRouter application data folder.
