@@ -11,7 +11,7 @@
  
 * see [Brouter profiles wiki pages](https://github.com/poutnikl/Brouter-profiles/wiki) for more information.
 
-* For reviewing development of my profile templates, * and/or testing of not yet published versions, 
+* For reviewing development of my profile templates,  and/or testing of not yet published versions, or to get all generated profiles
      * see their template repositories [Trekking-Poutnik](https://github.com/poutnikl/Trekking-Poutnik) / [Hiking-Poutnik](https://github.com/poutnikl/Hiking-Poutnik) / [Car-Profile](https://github.com/poutnikl/Car-Profile)
      * and their respective wiki pages [Trekking-Poutnik wiki](https://github.com/poutnikl/Trekking-Poutnik/wiki) / [Hiking-Poutnik wiki](https://github.com/poutnikl/Hiking-Poutnik/wiki) / [Car-Profile wiki](https://github.com/poutnikl/Car-Profile/wiki)
 
