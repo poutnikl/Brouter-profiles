@@ -110,14 +110,7 @@ call :wdir
 set tmplpath=master
 set zipfile=BR-Bike-Profiles%1.zip
 
-if exist %wgetexe% ( 
-%wgetexe% https://raw.githubusercontent.com/poutnikl/Trekking-Poutnik/%tmplpath%/Trekking-Poutnik.brf  
-) else (
-@Echo Download the file https://raw.githubusercontent.com/poutnikl/Trekking-Poutnik/%tmplpath%/Trekking-Poutnik.brf  
-@echo to the same folder as this batch is, and press any key to continue
-@echo ( Consider to get wget utility and confihure batch to use it )
-)
-
+%wgetexe% https://raw.githubusercontent.com/poutnikl/Trekking-Poutnik/%tmplpath%/Trekking-Poutnik.brf
 set src=Trekking-Poutnik
 set legfile=Bike-Profiles-List-Legend.txt
 
