@@ -1,0 +1,5 @@
+Profile name,  Profile description ( generated )   
+Walking.brf, SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard  
+Walking-wet.brf, SAC T1 - hiking - Wet variant  
+Hiking-SAC2.brf, SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness  
+Hiking-Mountain-SAC3.brf, SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience   
