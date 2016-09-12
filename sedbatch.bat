@@ -3,6 +3,8 @@ rem @Setlocal EnableDelayedExpansion
 
 rem Ver 1.1 Fixed generation for Hiking-wet profiles ( by error identical to dry ones )
 rem Ver 1.2 Parameter "main" generates only main/major profiles
+rem Ver 1.3 Added option to manually download templates in case wget is not available
+rem         added zreation of 7z archive, aside of the zip one. ( much smaller )
 
 rem windows batch to automatically generate a bunch of Brouter profiles 
 rem based on the bike/car/foot profile templates by Poutnik
