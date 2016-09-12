@@ -1,0 +1,10 @@
+Profile name,  Profile description ( generated )   
+Car-Fast.brf, Car profile going for Speed - possible with booth or vignette tolls 
+Car-Eco.brf, Economic Car profile, fuel saving. Possible with booth or vignette tolls. May be slow. 
+Car-FastEco.brf, Car profile balancing Speed and Cost - RECOMMENDED 
+Car-Short.brf, Car profile, shortest route, probably useless unless for technical emergency. 
+Car-Fast-TollFree.brf, Toll free, Car profile going for Speed 
+Car-FastEco-TollFree.brf, Toll free, Car profile balancing Speed and Cost - RECOMMENDED 
+Car-Eco-TollFree.brf, Toll free, Car profile going for low cost - May be slow, as low cost speed is 60-80 km per h 
+Car-Fast-NoMotorway.brf, Car profile going for Speed - Avoiding motorways\/motorroads 
+Car-Fast-NoUnpaved.brf, Car profile going for Speed - Avoiding unpaved ways 
