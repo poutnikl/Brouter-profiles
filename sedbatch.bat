@@ -3,8 +3,6 @@ rem @Setlocal EnableDelayedExpansion
 
 rem Ver 1.1 Fixed generation for Hiking-wet profiles ( by error identical to dry ones )
 rem Ver 1.2 Parameter "main" generates only main/major profiles
-rem Ver 1.3 Added option to manually download templates in case wget is not available
-rem         added zreation of 7z archive, aside of the zip one. ( much smaller )
 
 rem windows batch to automatically generate a bunch of Brouter profiles 
 rem based on the bike/car/foot profile templates by Poutnik
@@ -85,10 +83,13 @@ rem ******************************************************
 
 :legend
 
-echo Launch the batch file %0 as "%0 [car] [bike] [foot]", or "%0 all" , where [] means optional
-echo E.g. "%0 all" generates all  car + bike + foot profile packages
-echo "%0 car" generates the car package, "%0 foot bike" generates foot and bike packages.
-echo In contrary to previous %0 version, it generates independent packages for car/bike/foot profiles
+echo The sedbatch.bat expects particular command line parameters to do anything.
+echo Launch it by either of the following ways
+echo "sedbatch main" generates the most important profiles from the car, bike and foot profile template
+echo "sedbatch [car] [bike] [foot]" generates the all defined profile variants
+echo for all listed transportation modes  (  [] means optional )
+echo "sedbatch all" is equivaltent to  "sedbatch car bike foot" 
+echo and generates the all profiles for all car, bike and foot transportation modes
 pause
 exit /b
 
@@ -102,6 +103,23 @@ if exist .\*.brf del .\*.brf
 exit /b
 
 rem ******************************************************
+rem     GET TEMPLATE
+rem ******************************************************
+
+:gettemplate
+
+if not exist %wgetexe% goto :nowget
+%wgetexe% %1
+exit /b
+:nowget
+echo As you do not have wget configured to use, 
+Echo Download  %1  manually
+Echo and place the file to sedwdir subfolder in the folder where this batch resides.
+Echo Press any kay when done
+
+exit /b
+
+rem ******************************************************
 rem     B R O U T E R   B I C Y C L E   P R O F I L E S
 rem ******************************************************
 
@@ -110,11 +128,13 @@ rem ******************************************************
 call :wdir
 
 set tmplpath=master
-set zipfile=BR-Bike-Profiles%1.zip
-
-%wgetexe% https://raw.githubusercontent.com/poutnikl/Trekking-Poutnik/%tmplpath%/Trekking-Poutnik.brf
 set src=Trekking-Poutnik
-set legfile=Bike-Profiles-List-Legend.txt
+set archivefile=BR-Bike-Profiles%1
+
+set legfile=%archivefile%-Legend.txt
+
+call :gettemplate  https://raw.githubusercontent.com/poutnikl/Trekking-Poutnik/%tmplpath%/Trekking-Poutnik.brf
+
 
 if exist %legfile% del %legfile% 
 
@@ -165,11 +185,12 @@ rem ******************************************************
 call :wdir
 
 set tmplpath=master
-set zipfile=BR-Car-Profiles%1.zip
-
-%wgetexe% https://raw.githubusercontent.com/poutnikl/Car-Profile/%tmplpath%/Car-test-Template.brf
+set archivefile=BR-Car-Profiles%1
 set src=Car-test-Template
-set legfile=Car-Profiles-List-Legend.txt
+
+set legfile=%archivefile%-Legend.txt
+
+call :gettemplate  https://raw.githubusercontent.com/poutnikl/Car-Profile/%tmplpath%/Car-test-Template.brf
 
 
 if exist %legfile% del %legfile% 
@@ -230,14 +251,16 @@ rem ******************************************************
 call :wdir
 
 set tmplpath=master
-set zipfile=BR-Foot-Profiles%1.zip
-
-%wgetexe% https://raw.githubusercontent.com/poutnikl/Hiking-Poutnik/%tmplpath%/Hiking.brf
-
-ren Hiking.brf Hiking-template.brf
+set archivefile=BR-Foot-Profiles%1
 set src=Hiking-template
 
-set legfile=Hiking-Profiles-List-Legend.txt
+set legfile=%archivefile%-Legend.txt
+
+
+call :gettemplate  https://raw.githubusercontent.com/poutnikl/Hiking-Poutnik/%tmplpath%/Hiking.brf
+
+ren Hiking.brf Hiking-template.brf
+
 if exist %legfile% del %legfile% 
 
 Echo Profile name,  Profile description ( generated )  >%legfile% 
@@ -274,7 +297,7 @@ call :replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 %src%-VSHRP  Hiking
 call :replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 %src%-VSHRP  Hiking-Alpine-SAC6-VSHRP "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment, VERY Strong Hiking Route Preference"
 
 
-call :replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 %src%-wet  Walking "SAC T1 - hiking - Wet variant"
+rem call :replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 %src%-wet  Walking-wet "SAC T1 - hiking - Wet variant"
 rem call :replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 %src%-wet  Hiking-SAC2 "SAC T2 - mountain_hiking - Wet variant"
 rem call :replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 %src%-wet  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - Wet variant"
 rem call :replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 %src%-wet  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - Wet variant"
@@ -291,8 +314,12 @@ rem ******************************************************
 
 del %src%*.brf
 
-if exist ..\%zipfile% del ..\%zipfile%
-if exist %zipexe%  %zipexe% a ..\%zipfile% *.brf %legfile% -x!%src%*.brf
+if exist ..\%archivefile%.zip del ..\%archivefile%.zip
+if exist ..\%archivefile%.7z del ..\%archivefile%.7z
+
+if exist %zipexe%  %zipexe% a ..\%archivefile%.zip -tzip *.brf %legfile% -x!%src%*.brf
+if exist %zipexe%  %zipexe% a ..\%archivefile%.7z -t7z *.brf %legfile% -x!%src%*.brf
+
 Echo GENERATED PROFILES
 echo .
 type %legfile%
