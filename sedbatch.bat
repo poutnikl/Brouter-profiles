@@ -3,6 +3,7 @@ rem @Setlocal EnableDelayedExpansion
 
 rem Ver 1.1 Fixed generation for Hiking-wet profiles ( by error identical to dry ones )
 rem Ver 1.2 Parameter "main" generates only main/major profiles
+rem Ver 1.2.1 Fixed names of Trekking-Dry/Wet profiles ( Was Poutnik instead of Trekking ])
 
 rem windows batch to automatically generate a bunch of Brouter profiles 
 rem based on the bike/car/foot profile templates by Poutnik
@@ -142,8 +143,8 @@ Echo Profile name,  Profile description ( generated )  >%legfile%
 
 call :replaceone iswet 0 1 %src% %src%-wet
 
-call :replaceone iswet 0 0 %src%     Poutnik-dry "Standard Trekking profile by Poutnik, for dry weather"
-call :replaceone iswet 0 1 %src%-wet Poutnik-wet "Standard Trekking profile by Poutnik, for wet weather ( partially avoids muddy or slicky surface, but does not forbid them )"
+call :replaceone iswet 0 0 %src%     Trekking-dry "Standard Trekking profile by Poutnik, for dry weather"
+call :replaceone iswet 0 1 %src%-wet Trekking-wet "Standard Trekking profile by Poutnik, for wet weather ( partially avoids muddy or slicky surface, but does not forbid them )"
 
 call :replaceone MTB_factor 0.0 0.5  %src%  Trekking-MTB-medium    "Trekking profile with medium focus on unpaved roads, moderately penalizing mainroads."
 call :replaceone MTB_factor 0.0 -0.5 %src%  Trekking-Fast          "Trekking profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
