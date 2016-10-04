@@ -1,6 +1,6 @@
 ---context:global   # following code refers to global config
 
-# the elevation parameters
+# V1.0.1 fixed evaluation order for boot=no
 
 assign portable_boat true
 assign carry_cost 500
