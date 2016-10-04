@@ -1,0 +1,91 @@
+---context:global   # following code refers to global config
+
+# the elevation parameters
+
+assign portable_boat true
+assign carry_cost 500
+assign wait_cost 500
+
+
+assign downhillcost 0
+assign downhillcutoff 1.5
+assign uphillcost 0
+assign uphillcutoff 1.5
+
+---context:way   # following code refers to way-tags
+# way context
+
+# seamark:type;0001564 recommended_track
+# seamark:type;0000522 fairway
+
+# waterway;0000016046 river
+# waterway;0000009496 canal
+# waterway;0000007876 riverbank
+# waterway;0000002202 weir
+# waterway;0000001364 dam
+# waterway;0000000386 lock
+# waterway;0000000321 tidal_flat_slough
+# waterway;0000000179 wadi
+# waterway;0000000126 dock
+# waterway;0000000113 fish_pass
+# waterway;0000000086 boatyard
+# waterway;0000000071 fairway
+# waterway;0000000059 lock_gate
+# 
+# boat;0000019888 no
+# boat;0000002718 yes
+# boat;0000000232 private
+# boat;0000000064 permissive
+# boat;0000000045 designated
+# 
+# motorboat;0000001077 yes
+# motorboat;0000000808 no
+# motorboat;0000000025 private privat
+# 
+# route;0000000194 canoe
+
+assign turncost if portable_boat then 20 else 100
+assign initialcost 
+    if waterway=riverbank           then 10000
+    else if waterway=weir           then ( if portable_boat then carry_cost else 10000000 )
+    else if waterway=dam            then ( if portable_boat then multiply 4 carry_cost else 1000000 )
+    else if waterway=lock|lock_gate|dock
+                                    then ( if portable_boat then carry_cost else wait_cost )
+    else 0
+
+
+assign costfactor
+  if      waterway=river|canal      then 1.0
+  else if waterway=riverbank|wadi   then 10000
+  else if waterway=weir|dam         then ( if portable_boat then 10.0 else 10000 )
+  else if seamark:type=recommended_track|fairway    then 1.0
+  else if waterway=tidal_flat_slough then ( if portable_boat then 2.0 else 20.0 )
+  else if waterway=lock|lock_gate|dock then  ( if portable_boat then 2.0 else 20.0 )
+  else if waterway=fairway           then 1.0
+  else if motorboat=yes              then 1.0
+  else if and motorboat=no|private not portable_boat then 10000
+  else if and portable_boat boat=yes|permissive|designated   then 1.0
+  else if boat=no|private            then 10000
+  else if route=canoe               then ( if portable_boat then 1.0 else 10000 )
+  else if waterway=dock             then 10.0
+  
+  else 10000
+
+---context:node  # following code refers to node tags
+# waterway;0000004698 weir
+# waterway;0000001647 lock_gate
+# waterway;0000000425 waterfall
+
+# waterway;0000000219 milestone
+# waterway;0000000187 depth
+# waterway;0000000170 lock
+# ford;0000037927 yes
+# ford;0000000310 stepping_stones
+
+assign initialcost 
+    if waterway=weir                 then ( if portable_boat then carry_cost             else 1000000 )
+    else if waterway=lock_gate|lock  then ( if portable_boat then carry_cost             else wait_cost )
+    else if waterway=waterfall       then ( if portable_boat then multiply 10 carry_cost else 1000000 )
+    else if ford=yes                 then ( if portable_boat then 0                      else 1000000 )
+    else if ford=stepping_stones     then ( if portable_boat then carry_cost             else 1000000 )
+    else 0
