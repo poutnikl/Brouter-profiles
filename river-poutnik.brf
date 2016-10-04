@@ -55,19 +55,21 @@ assign initialcost
 
 
 assign costfactor
-  if      waterway=river|canal      then 1.0
-  else if waterway=riverbank|wadi   then 10000
+  
+       if or waterway=riverbank|wadi boat=no|private  then 10000
+  else if and motorboat=no|private not portable_boat then 10000
   else if waterway=weir|dam         then ( if portable_boat then 10.0 else 10000 )
+  else if waterway=river|canal      then 1.0
   else if seamark:type=recommended_track|fairway    then 1.0
   else if waterway=tidal_flat_slough then ( if portable_boat then 2.0 else 20.0 )
   else if waterway=lock|lock_gate|dock then  ( if portable_boat then 2.0 else 20.0 )
   else if waterway=fairway           then 1.0
   else if motorboat=yes              then 1.0
-  else if and motorboat=no|private not portable_boat then 10000
+  
   else if and portable_boat boat=yes|permissive|designated   then 1.0
-  else if boat=no|private            then 10000
-  else if route=canoe               then ( if portable_boat then 1.0 else 10000 )
-  else if waterway=dock             then 10.0
+  
+  else if and route=canoe portable_boat then 1.0 
+  else if waterway=dock                 then 10.0
   
   else 10000
 
@@ -84,8 +86,8 @@ assign costfactor
 
 assign initialcost 
     if waterway=weir                 then ( if portable_boat then carry_cost             else 1000000 )
-    else if waterway=lock_gate|lock  then ( if portable_boat then carry_cost             else wait_cost )
     else if waterway=waterfall       then ( if portable_boat then multiply 10 carry_cost else 1000000 )
     else if ford=yes                 then ( if portable_boat then 0                      else 1000000 )
     else if ford=stepping_stones     then ( if portable_boat then carry_cost             else 1000000 )
+    else if waterway=lock_gate|lock  then ( if portable_boat then carry_cost             else wait_cost )
     else 0
