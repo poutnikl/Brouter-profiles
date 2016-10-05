@@ -1,6 +1,7 @@
 ---context:global   # following code refers to global config
 
 # V1.0.1 fixed evaluation order for boot=no
+# V1.0.2 fixed fish_pass
 
 assign portable_boat true
 assign carry_cost 500
@@ -51,15 +52,18 @@ assign initialcost
     else if waterway=dam            then ( if portable_boat then multiply 4 carry_cost else 1000000 )
     else if waterway=lock|lock_gate|dock
                                     then ( if portable_boat then carry_cost else wait_cost )
+    else if waterway=fish_pass      then ( if portable_boat then carry_cost else 1000000 )
     else 0
 
 
 assign costfactor
   
-       if or waterway=riverbank|wadi boat=no|private  then 10000
+  if      waterway=riverbank|wadi    then 10000
+  else if boat=no|private            then ( if portable_boat then 10.0 else 10000 )
+  else if waterway=fish_pass         then ( if portable_boat then 10.0 else 10000 )
   else if and motorboat=no|private not portable_boat then 10000
-  else if waterway=weir|dam         then ( if portable_boat then 10.0 else 10000 )
-  else if waterway=river|canal      then 1.0
+  else if waterway=weir|dam          then ( if portable_boat then 10.0 else 10000 )
+  else if waterway=river|canal       then 1.0
   else if seamark:type=recommended_track|fairway    then 1.0
   else if waterway=tidal_flat_slough then ( if portable_boat then 2.0 else 20.0 )
   else if waterway=lock|lock_gate|dock then  ( if portable_boat then 2.0 else 20.0 )
