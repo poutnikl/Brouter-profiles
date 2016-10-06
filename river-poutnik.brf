@@ -2,6 +2,7 @@
 
 # V1.0.1 fixed evaluation order for boot=no
 # V1.0.2 fixed fish_pass
+# V1.0.3 increased canal costfactor
 
 assign portable_boat true
 assign carry_cost 500
@@ -63,7 +64,8 @@ assign costfactor
   else if waterway=fish_pass         then ( if portable_boat then 10.0 else 10000 )
   else if and motorboat=no|private not portable_boat then 10000
   else if waterway=weir|dam          then ( if portable_boat then 10.0 else 10000 )
-  else if waterway=river|canal       then 1.0
+  else if waterway=river             then 1.0
+  else if waterway=canal             then 1.5
   else if seamark:type=recommended_track|fairway    then 1.0
   else if waterway=tidal_flat_slough then ( if portable_boat then 2.0 else 20.0 )
   else if waterway=lock|lock_gate|dock then  ( if portable_boat then 2.0 else 20.0 )
