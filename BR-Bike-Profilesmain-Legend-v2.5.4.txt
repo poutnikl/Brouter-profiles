@@ -1,8 +1,0 @@
-Profile name,  Profile description ( generated )   
-Trekking-dry.brf, Standard Trekking profile by Poutnik, for dry weather 
-Trekking-wet.brf, Standard Trekking profile by Poutnik, for wet weather ( partially avoids muddy or slicky surface, but does not forbid them 
-Trekking-MTB-medium.brf, Trekking profile with medium focus on unpaved roads, moderately penalizing mainroads. 
-Trekking-Fast.brf, Trekking profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike. 
-MTB.brf, MTB profile, based on MTBiker feedback  
-MTB-light.brf, Light MTB profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong  
-Trekking-SmallRoads.brf, Trekking profile more preferring small paved roads and tracks  
