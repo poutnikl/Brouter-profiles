@@ -4,6 +4,7 @@ rem @Setlocal EnableDelayedExpansion
 rem Ver 1.1 Fixed generation for Hiking-wet profiles ( by error identical to dry ones )
 rem Ver 1.2 Parameter "main" generates only main/major profiles
 rem Ver 1.2.1 Fixed names of Trekking-Dry/Wet profiles ( Was Poutnik instead of Trekking ])
+rem Ver 1.3.1 Added Shortest-P profile
 
 rem windows batch to automatically generate a bunch of Brouter profiles 
 rem based on the bike/car/foot profile templates by Poutnik
@@ -265,6 +266,7 @@ ren Hiking.brf Hiking-template.brf
 if exist %legfile% del %legfile% 
 
 Echo Profile name,  Profile description ( generated )  >%legfile% 
+call :replaceone assign shortest_way  0 1 %src% Shortest-P "Shortest way - implemented naviagtion hints."
 
 call :replaceone iswet 0 1 %src% %src%-wet
 rem StrongHikingRoutePreference  SHRP
