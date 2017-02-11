@@ -171,10 +171,13 @@ call :replaceone cycleroutes_pref 0.2 0.0 %src%      Trekking-ICR-dry  "Trekking
 call :replaceone cycleroutes_pref 0.2 0.0 %src%-wet  Trekking-ICR-wet  "Trekking profile ignoring existance of cycleroutes, wet weather variant"
 call :replaceone cycleroutes_pref 0.2 0.6 %src%      Trekking-FCR-dry  "Trekking profile sticking to cycleroutes"
 call :replaceone cycleroutes_pref 0.2 0.6 %src%-wet  Trekking-FCR-wet  "Trekking profile sticking to cycleroutes, wet weather variant"
-call :replaceone routelevel 2 4 %src%      Trekking-CRsame             "Trekking profile increasing preference of local routes, evaluating them as long distance routes" 
-call :replaceone routelevel 2 4 %src%-wet  Trekking-CRsame-wet         "Trekking profile increasing preference of local routes, evaluating them as long distance routes. Wet variant" 
-call :replacetwo cycleroutes_pref 0.2 0.6 routelevel 2 4 %src%      Trekking-FCR-CRsame     "Trekking profile sticking to cycleroutes, increasing preference of local routes, evaluating them as long distance routes" 
-call :replacetwo cycleroutes_pref 0.2 0.6 routelevel 2 4 %src%-wet  Trekking-FCR-CRsame-wet "Trekking profile sticking to cycleroutes, increasing preference of local routes, evaluating them as long distance routes. Wet variant"  
+
+rem obsolete since Trekking-Poutnik v2.5.12
+rem call :replaceone routelevel 2 4 %src%      Trekking-CRsame             "Trekking profile increasing preference of local routes, evaluating them as long distance routes" 
+rem call :replaceone routelevel 2 4 %src%-wet  Trekking-CRsame-wet         "Trekking profile increasing preference of local routes, evaluating them as long distance routes. Wet variant" 
+rem call :replacetwo cycleroutes_pref 0.2 0.6 routelevel 2 4 %src%      Trekking-FCR-CRsame     "Trekking profile sticking to cycleroutes, increasing preference of local routes, evaluating them as long distance routes" 
+rem call :replacetwo cycleroutes_pref 0.2 0.6 routelevel 2 4 %src%-wet  Trekking-FCR-CRsame-wet "Trekking profile sticking to cycleroutes, increasing preference of local routes, evaluating them as long distance routes. Wet variant"  
+
 call :replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 %src%-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
 
 goto :closing
