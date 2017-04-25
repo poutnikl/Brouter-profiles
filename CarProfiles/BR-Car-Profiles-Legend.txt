@@ -1,0 +1,26 @@
+Profile name,  Profile description ( generated )   
+Car-Fast.brf, Car profile going for Speed - possible with booth or vignette tolls 
+Car-Eco.brf, Economic Car profile, fuel saving. Possible with booth or vignette tolls. May be slow. 
+Car-FastEco.brf, Car profile balancing Speed and Cost - RECOMMENDED 
+Car-Short.brf, Car profile, shortest route, probably useless unless for technical emergency. 
+Car-Fast-TollFree.brf, Toll free, Car profile going for Speed 
+Car-FastEco-TollFree.brf, Toll free, Car profile balancing Speed and Cost - RECOMMENDED 
+Car-Eco-TollFree.brf, Toll free, Car profile going for low cost - May be slow, as low cost speed is 60-80 km per h 
+Car-Fast-NoMotorway.brf, Car profile going for Speed - Avoiding motorways\/motorroads 
+Car-Fast-NoUnpaved.brf, Car profile going for Speed - Avoiding unpaved ways 
+Car-FastEco-NoMotorway.brf, Car profile balancing Speed and Cost - Avoiding motorways\/motorroads, RECOMMENDED 
+Car-Eco-NoMotorway.brf, Economic Car profile, fuel saving, Avoiding motorways\/motorroads, May be slow. 
+Car-FastEco-NoUnpaved.brf, Car profile balancing Speed and Cost - Avoiding unpaved ways 
+Car-Eco-NoUnpaved.brf, Car profile going for low cost - Avoiding unpaved ways - May be slow. 
+Car-Fast-NoMinorRoads.brf, Fast profile avoiding unpaved and minor paved roads  
+Car-Fast-TollFree-NoMinorRoads.brf, Fast tollfree profile avoiding unpaved and minor paved roads  
+Car-Fast-TertiaryRoads.brf, Fast long distance profile following tertiary and better roads  
+Car-Fast-TollFree-TertiaryRoads.brf, Fast tollfree long distance profile following tertiary and better roads  
+Car-Fast-SecondaryRoads.brf, Fast long distance profile following secondary and better roads  
+Car-Fast-TollFree-SecondaryRoads.brf, Fast tollfree long distance profile following secondary and better roads  
+Car-FastEco-NoMinorRoads.brf, FastEco profile avoiding unpaved and minor paved roads  
+Car-FastEco-TollFree-NoMinorRoads.brf, FastEco tollfree profile avoiding unpaved and minor paved roads  
+Car-FastEco-TertiaryRoads.brf, FastEco long distance profile following tertiary and better roads  
+Car-FastEco-TollFree-TertiaryRoads.brf, FastEco tollfree long distance profile following tertiary and better roads  
+Car-FastEco-SecondaryRoads.brf, FastEco long distance profile following secondary and better roads  
+Car-FastEco-TollFree-SecondaryRoads.brf, FastEco tollfree long distance profile following secondary and better roads  
