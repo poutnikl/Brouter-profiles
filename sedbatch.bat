@@ -167,18 +167,27 @@ call :replaceone MTB_factor 0.0 -0.5 %src%-wet  Trekking-Fast-wet          "Trek
 call :replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  %src%-wet MTB-wet "MTB wet weather profile, based on MTBiker feedback"
 call :replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  %src%-wet MTB-light-wet "Light MTB wet weather profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong"
 
-call :replaceone cycleroutes_pref 0.2 0.0 %src%      Trekking-ICR-dry  "Trekking profile ignoring existance of cycleroutes"
-call :replaceone cycleroutes_pref 0.2 0.0 %src%-wet  Trekking-ICR-wet  "Trekking profile ignoring existance of cycleroutes, wet weather variant"
-call :replaceone cycleroutes_pref 0.2 0.6 %src%      Trekking-FCR-dry  "Trekking profile sticking to cycleroutes"
-call :replaceone cycleroutes_pref 0.2 0.6 %src%-wet  Trekking-FCR-wet  "Trekking profile sticking to cycleroutes, wet weather variant"
-
-rem obsolete since Trekking-Poutnik v2.5.12
-rem call :replaceone routelevel 2 4 %src%      Trekking-CRsame             "Trekking profile increasing preference of local routes, evaluating them as long distance routes" 
-rem call :replaceone routelevel 2 4 %src%-wet  Trekking-CRsame-wet         "Trekking profile increasing preference of local routes, evaluating them as long distance routes. Wet variant" 
-rem call :replacetwo cycleroutes_pref 0.2 0.6 routelevel 2 4 %src%      Trekking-FCR-CRsame     "Trekking profile sticking to cycleroutes, increasing preference of local routes, evaluating them as long distance routes" 
-rem call :replacetwo cycleroutes_pref 0.2 0.6 routelevel 2 4 %src%-wet  Trekking-FCR-CRsame-wet "Trekking profile sticking to cycleroutes, increasing preference of local routes, evaluating them as long distance routes. Wet variant"  
+call :replaceone cycleroutes_pref 0.2 0.0 %src%      Trekking-ICR-dry  "Trekking profile ignoring existence of cycleroutes"
+call :replaceone cycleroutes_pref 0.2 0.0 %src%-wet  Trekking-ICR-wet  "Trekking profile ignoring existence of cycleroutes, wet weather variant"
+call :replaceone cycleroutes_pref 0.2 0.5 %src%      Trekking-FCR-dry  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes"
+call :replaceone cycleroutes_pref 0.2 0.5 %src%-wet  Trekking-FCR-wet  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes, wet weather variant"
+call :replaceone cycleroutes_pref 0.2 0.8 %src%      Trekking-LCR-dry  "Trekking profile for long distance cycleroutes"
+call :replaceone cycleroutes_pref 0.2 0.8 %src%-wet  Trekking-LCR-wet  "Trekking profile for long distance cycleroutes, wet weather variant"
 
 call :replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 %src%-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
+
+call :replaceone hills 1 4 %src%  Trekking-Valley  "Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors."
+
+call :replaceone hills 1 5 %src%  Trekking-No-Flat  "Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost."
+
+call :replacetwo MTB_factor 0.0 1.5 smallpaved_factor 0.0 -0.75  %src% %src%-tmp
+call :replaceone isbike_for_mainroads true false %src%-tmp  Trekking-tracks "Trekking in Tracks mode, Strong preference of unpaved tracks and paths"
+del %src%-tmp.brf 
+
+
+call :replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -1.0  %src% %src%-tmp
+call :replacetwo isbike_for_mainroads true false  path_preference  0.0 20.0 %src%-tmp  Trekking-hilly-paths "Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths"
+del %src%-tmp.brf 
 
 goto :closing
 
