@@ -14,12 +14,14 @@ Trekking-MTB-strong-wet.brf, Trekking wet weather profile with strong focus on u
 Trekking-Fast-wet.brf, Trekking wet weather profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike. 
 MTB-wet.brf, MTB wet weather profile, based on MTBiker feedback  
 MTB-light-wet.brf, Light MTB wet weather profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong  
-Trekking-ICR-dry.brf, Trekking profile ignoring existance of cycleroutes 
-Trekking-ICR-wet.brf, Trekking profile ignoring existance of cycleroutes, wet weather variant 
-Trekking-FCR-dry.brf, Trekking profile sticking to cycleroutes 
-Trekking-FCR-wet.brf, Trekking profile sticking to cycleroutes, wet weather variant 
-Trekking-CRsame.brf, Trekking profile increasing preference of local routes, evaluating them as long distance routes 
-Trekking-CRsame-wet.brf, Trekking profile increasing preference of local routes, evaluating them as long distance routes. Wet variant 
-Trekking-FCR-CRsame.brf, Trekking profile sticking to cycleroutes, increasing preference of local routes, evaluating them as long distance routes  
-Trekking-FCR-CRsame-wet.brf, Trekking profile sticking to cycleroutes, increasing preference of local routes, evaluating them as long distance routes. Wet variant  
+Trekking-ICR-dry.brf, Trekking profile ignoring existence of cycleroutes 
+Trekking-ICR-wet.brf, Trekking profile ignoring existence of cycleroutes, wet weather variant 
+Trekking-FCR-dry.brf, Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes 
+Trekking-FCR-wet.brf, Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes, wet weather variant 
+Trekking-LCR-dry.brf, Trekking profile for long distance cycleroutes 
+Trekking-LCR-wet.brf, Trekking profile for long distance cycleroutes, wet weather variant 
 Trekking-SmallRoads-wet.brf, Trekking profile more preferring small paved roads and tracks, wet weather variant  
+Trekking-Valley.brf, Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors. 
+Trekking-No-Flat.brf, Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost. 
+Trekking-tracks.brf, Trekking in Tracks mode, Strong preference of unpaved tracks and paths 
+Trekking-hilly-paths.brf, Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths  
