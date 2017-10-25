@@ -25,3 +25,4 @@ Trekking-Valley.brf, Trekking in Valley mode, preferred flats as far as possible
 Trekking-No-Flat.brf, Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost. 
 Trekking-tracks.brf, Trekking in Tracks mode, Strong preference of unpaved tracks and paths 
 Trekking-hilly-paths.brf, Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths  
+Trekking-Tandem-dry.brf, Trekking with a tandem, extra penalties on dismounting, pushing and lifting the bike up
