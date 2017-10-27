@@ -5,6 +5,7 @@ rem Ver 1.1 Fixed generation for Hiking-wet profiles ( by error identical to dry
 rem Ver 1.2 Parameter "main" generates only main/major profiles
 rem Ver 1.2.1 Fixed names of Trekking-Dry/Wet profiles ( Was Poutnik instead of Trekking ])
 rem Ver 1.3.1 Added Shortest-P profile
+rem Ver 1.3.2 Added Tandem profiles
 
 rem windows batch to automatically generate a bunch of Brouter profiles 
 rem based on the bike/car/foot profile templates by Poutnik
@@ -187,6 +188,10 @@ del %src%-tmp.brf
 
 call :replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -1.0  %src% %src%-tmp
 call :replacetwo isbike_for_mainroads true false  path_preference  0.0 20.0 %src%-tmp  Trekking-hilly-paths "Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths"
+del %src%-tmp.brf 
+
+call :replacetwo ignore_cycle_barrier 1 0 pushpenalty 4 6  %src% %src%-tmp
+call :replacetwo haulpenalty 40 500  dismountpenalty  100 250 %src%-tmp  Trekking-Tandem-dry "Trekking with a tandem, extra penalties on dismounting, pushing and lifting the bike up"
 del %src%-tmp.brf 
 
 goto :closing
