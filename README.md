@@ -1,7 +1,7 @@
 
 #### Poutnik's profiles for bicycle/hiking/car routing with [BRouter Android application](http://brouter.de/brouter/)
  
-* See [Poutnik's Brouter profiles wiki pages](https://github.com/poutnikl/Brouter-profiles/wiki) for more information.
+* See [Brouter profiles wiki](https://github.com/poutnikl/Brouter-profiles/wiki) for general and end user information.
 
 * See also [Contribution-tips](https://github.com/poutnikl/Brouter-profiles/wiki/Contribution-tips) and [Profile-developer-notes](
 https://github.com/poutnikl/Brouter-profiles/wiki/Profile-developer-notes)  ( both in progress )
