@@ -1,5 +1,7 @@
 
-#### Poutnik's profiles for bicycle/hiking/car routing with [BRouter Android application](http://brouter.de/brouter/)
+#### Poutnik's profiles for bicycle/hiking/car routing with [BRouter Android application](http://brouter.de/brouter/) 
+
+( BRouter is a routing service back-end for [Brouter-web](http://brouter.de/brouter-web/) front-end and for Android LocusMap/OSMAnd/Oruxmaps applications)
  
 *  This repository serves just as a featured profile storage. Template based profile development is done in dedicated repositories for respective templates. See [Brouter profiles wiki](https://github.com/poutnikl/Brouter-profiles/wiki) for more detailed general and end user information.
 
