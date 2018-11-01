@@ -3,7 +3,9 @@
 
 ( BRouter is a routing service back-end for [Brouter-web](http://brouter.de/brouter-web/) front-end and for Android LocusMap/OSMAnd/Oruxmaps applications)
  
-*  This repository serves just as a featured profile storage. Template based profile development is done in dedicated repositories for respective templates. See [Brouter profiles wiki](https://github.com/poutnikl/Brouter-profiles/wiki) for more detailed general and end user information.
+*  This repository serves just as a featured storage for end user profiles and auxiliary files. The template-based profile development is done in dedicated repositories for respective templates. 
+
+* See [Brouter profiles wiki](https://github.com/poutnikl/Brouter-profiles/wiki) for more detailed general and end user information.
 
 * See also [Contribution-tips](https://github.com/poutnikl/Brouter-profiles/wiki/Contribution-tips) and [Profile-developer-notes](
 https://github.com/poutnikl/Brouter-profiles/wiki/Profile-developer-notes)  ( both in progress )
