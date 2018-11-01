@@ -4,7 +4,7 @@
 * See [Poutnik's Brouter profiles wiki pages](https://github.com/poutnikl/Brouter-profiles/wiki) for more information.
 
 * See also [Contribution-tips](https://github.com/poutnikl/Brouter-profiles/wiki/Contribution-tips) and [Profile-developer-notes](
-https://github.com/poutnikl/Brouter-profiles/wiki/Profile-developer-notes)
+https://github.com/poutnikl/Brouter-profiles/wiki/Profile-developer-notes)  ( both in progress )
 
 * The related projects\:  
    * [BRouter](https://github.com/abrensch/brouter)
