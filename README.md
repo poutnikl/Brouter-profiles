@@ -1,16 +1,16 @@
 
-#### Poutnik's profiles for bicycle/hiking/car routing with [BRouter Android application](http://brouter.de/brouter/) 
-
-( BRouter is a routing service back-end for [Brouter-web](http://brouter.de/brouter-web/) front-end and for Android LocusMap/OSMAnd/Oruxmaps applications)
+#### My profiles for  [BRouter Android application](http://brouter.de/brouter/) 
  
 *  This repository serves just as a featured storage for end user profiles and auxiliary files. The template-based profile development is done in dedicated repositories for respective templates. 
 
 * See [Brouter profiles wiki](https://github.com/poutnikl/Brouter-profiles/wiki) for more detailed general and end user information.
 
+* BRouter is a local offline navigation routing service for Android. It primarily aimes for bicycle routing, but is very vell applicable for foot and car routing as well, even if it cannot beat dedicated car navigations. It serves as back-end routing for Android map/navigation applications LocusMap, OSMAnd and Oruxmaps. Its Java variant serves as a back-end routing for the [Brouter-web](http://brouter.de/brouter-web/) front-end. It is able also to run standalone, providing as the output the route in navigation hints in the form of GPX file.
+
 * See also [Contribution-tips](https://github.com/poutnikl/Brouter-profiles/wiki/Contribution-tips) and [Profile-developer-notes](
 https://github.com/poutnikl/Brouter-profiles/wiki/Profile-developer-notes)  ( both in progress )
 
-* The related projects\:  
+* The related projects on GitHub\:  
    * [BRouter](https://github.com/abrensch/brouter)
    * [Brouter-web](https://github.com/nrenner/brouter-web)
    * [Zossebart's profiles](https://github.com/zossebart/brouter-mtb)  
