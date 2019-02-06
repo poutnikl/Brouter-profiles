@@ -28,7 +28,7 @@ segmentdownloadfolder=~/Downloads/segments4
 function getrd5file {
 # %1 = lon  E5,E10,   %2=lat
 
-wget -N  $websegments/$1_$2.rd5
+wget -N --limit-rate=1M $websegments/$1_$2.rd5
 }
 
 # ***********************************************************************
@@ -43,8 +43,10 @@ getrd5file E0 N45
 getrd5file E5 N40 
 getrd5file E5 N45 
 getrd5file E5 N50
+getrd5file E10 N40
 getrd5file E10 N45
 getrd5file E10 N50
+getrd5file E15 N40
 getrd5file E15 N45
 getrd5file E15 N50
 getrd5file E15 N40 
@@ -52,9 +54,3 @@ getrd5file E20 N45
 getrd5file E20 N50 
 getrd5file E5 N35 
 getrd5file E5 N40 
-
-
-
-
-
-
