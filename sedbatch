@@ -1,0 +1,463 @@
+#!/bin/bash
+#
+#********************** 
+# Ver 1.1 Fixed generation for Hiking-wet profiles ( by error identical to dry ones )
+# Ver 1.2 Parameter "main" generates only main/major profiles
+# Ver 1.2.1 Fixed names of Trekking-Dry/Wet profiles ( Was Poutnik instead of Trekking ])
+# Ver 1.3.1 Added Shortest-P profile
+# Ver 1.3.2 windows batch ported to Linux Bash
+# Ver 1.4 Improved script parameter logic. Action paramaters are bike/car/foot, modifiers are master/develop and all/main
+#         Implemented termux path specifics and profike copying
+#
+# automatically generates a bunch of Brouter profiles 
+# based on the bike/car/foot profile templates by Poutnik
+#
+# When launched, 
+#   1/  it create a working subfolder in a folder where the script resides
+#   2/  it downloads latest bike/car/foot profile template from GitHub depository
+#   3/  it generates end user profiles by automatic subtitution of parameters
+#   4/  it packs them into a single ZIP archive and deletes the working subfolder content.
+#   5/  it optionally copies profiles to the scriot folder
+#          or from termux private space to Android storage.
+#
+# ******************************************************
+#                     P R E R E Q U I S I T I E S
+# ******************************************************
+# 0 This bash script can be run
+#   either on a desktop Linux
+#   either on Android within Linux terminal emulator termux.
+#
+# Points 1-5 applies only if to be run on an Android device
+# 
+# 1 Install termux ( Linux terminal emulator for Android )
+#   https://play.google.com/store/apps/details?id=com.termux
+#   Read links below for more
+#   https://termux.com
+#   https://wiki.termux.com/wiki/Main_Page
+#   https://wiki.termux.com/wiki/Community
+#   https://github.com/termux
+#
+# 2 Run termux, what open Linux terminal emulator
+# 3 Execute "termux-setup-storage"
+#   if you want to grant termux permissions to write profile files out of its sandbox
+#   to be able to copy profiles to Android storage.
+#   It is recommendec not to copy directly to live profiles2 folder.
+#   (run "apt update && apt upgrade" to make sure that this tool is available)
+#   See  more at https://wiki.termux.com/wiki/Termux-setup-storage
+# 4 Check if sed and wget commands are available.
+#   If not, install them by "pkg install sed" resp. "pkg install wget"
+# 5 Check and define withing the script code
+#   your desired target folder for copying profiles.
+#   
+# 6 If run on Linux, or on termux without jailbreak
+#   ( the script is testing both )
+#   the optional (aside of zip with profiles)
+#   is redirected to the folder the scriot resides.
+#
+# 7 Both Linux and termux expects placing the sedbatch script
+#    (subject of later renaming, remsins for historical reasons )
+#
+# 8  
+# The sedbatch.sh expects particular command line parameters to do anything.
+# "sedbatch.sh" without parameters lists this legend.
+# "sedbatch.sh" can be provided by arbitrary sequence of keywords:
+# bike car foot main all master develop copy nocopy           
+#
+# bike, car, foot are "action" keywords, generating respective profiles from a profile template
+# all(default), main are  modifiers, setting scope of generated profiles ( all or the most important)
+# master(default), develop are modifiers determining the github repository branch, where the profile template is located
+# nocopy(default), copy, copies profiles to Android storage ( jailbroken termux )
+# or to the script folder.
+#
+# Examples of usage'
+# "sedbatch.sh bike" generates all profiles from bike trekking template
+# and stores them in BR-Bike-Profiles-master-all.zip
+# and generates the all profiles for all car, bike and foot transportation modes
+#
+# "sedbatch.sh main develop bike" generates only selected major profiles from bike trekking template
+# from develop branch
+#
+# "sedbatch.sh copy main foot all bike develop main car"
+# generates  major profiles for hiking, all profiles for bike trekking
+# and selected profiles from car template develop branch.
+# Additionally, profiles are copied to selected folder
+#
+# ******************************************************
+#                     L E G E N D
+# ******************************************************
+ 
+function legend { 
+echo 'The sedbatch.sh expects particular command line parameters to do anything.'
+echo '"sedbatch.sh" can be provided by arbitrary sequence of following keywords:'
+echo 'bike car foot main all master develop copy nocopy'              
+echo '.'
+echo 'bike, car, foot are "action" keywords, generating respective profiles from a profile template'
+echo 'all(default), main set the scope of generated profiles ( all or the most important)'
+echo 'master(default), develop are modifiers determining the github repository branch, where the profile template is located'
+echo '.'
+echo 'If a modifier is used it becomes the new default'
+echo 'for the rest of the line, unless overridden again.'
+echo '.'
+echo 'for examples and more info, see the legend comments withing the script.'
+
+}
+ 
+# ******************************************************
+#   V A R I A B L E S   A N D   P R E C H E C K S
+# ******************************************************
+#termux path to termux home folder
+termuxhome=/data/data/com.termux/files/home
+if [[ -d $termuxhome ]]; then
+  ontermux=true
+else
+  ontermux=false
+fi
+#termux link to internal storage
+prefixtostorage=~/storage/shared
+
+#Is termux jailbreak set ?
+if [[ $ontermux = true && -d $prefixtostorage ]]; then
+  termux2storage=true
+else
+  termux2storage=false
+fi
+
+githubprofile=https://raw.githubusercontent.com/poutnikl
+brouterlinuxpath=.. #in the folder of the script.
+broutertermuxpath="$prefixtostorage/Brouter"
+
+if [[ $termux2storage = true ]]; then
+  brouterpath="$broutertermuxpath"
+else
+  brouterpath="$brouterlinuxpath"
+fi
+
+if [[ $termux2storage = true && ! -d $brouterpath  ]]; then
+  echo The folder $brouterpath does not exist.
+  exit
+elif [[ $termux2storage = true ]]; then
+  profilespath="$brouterpath/myprofiles"
+else
+  profilespath="$brouterpath"
+fi
+
+
+
+if [[ $termux2storage = true && ! -d "$profilespath"  ]]; then
+  mkdir "$profilespath" || {
+  echo The folder $profilespath could not be created.
+  exit
+  }
+fi
+
+#Default values of modifiers
+GithubBranch=master #branch master or develop
+scope=all           #scope all or main
+copy2brouter=nocopy #copy or nocopy
+
+#Repository and template names
+bikerep=Trekking-Poutnik
+biketemp=Trekking-Poutnik
+footrep=Hiking-Poutnik
+foottemp=Hiking
+carrep=Car-Profile
+cartemp=Car-test-Template
+
+
+ 
+# ******************************************************
+#                     W D I R
+# ******************************************************
+function wdir {
+[[ ! -d "./sedwdir" ]]  && mkdir  "./sedwdir"
+cd ./sedwdir || return
+rm  ./*.brf
+}
+ 
+
+# ******************************************************
+#     B R O U T E R   B I C Y C L E   P R O F I L E S
+# ******************************************************
+
+ 
+function bike {
+ 
+wdir
+
+src=$biketemp
+archivefile=BR-Bike-Profiles-$GithubBranch-$scope
+ 
+legfile=$archivefile-Legend.txt
+ 
+wget  "$githubprofile/$bikerep/$GithubBranch/$biketemp.brf"
+ 
+ 
+[[ -f $legfile ]] && rm "$legfile" 
+ 
+echo 'Profile name,  Profile description ( generated )'  >"$legfile" 
+ 
+replaceone iswet 0 1 $src $src-wet
+ 
+replaceone iswet 0 0 $src     Trekking-dry "Standard Trekking profile by Poutnik, for dry weather"
+replaceone iswet 0 1 $src-wet Trekking-wet 'Standard Trekking profile by Poutnik, for wet weather ( partially avoids muddy or slicky surface, but does not forbid them )'
+ 
+replaceone MTB_factor 0.0 0.5  $src  Trekking-MTB-medium    "Trekking profile with medium focus on unpaved roads, moderately penalizing mainroads."
+replaceone MTB_factor 0.0 -0.5 $src  Trekking-Fast          "Trekking profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
+ 
+replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  $src    MTB "MTB profile, based on MTBiker feedback"
+replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  $src    MTB-light "Light MTB profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong"
+ 
+replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 $src       Trekking-SmallRoads       "Trekking profile more preferring small paved roads and tracks"
+ 
+if [[ "$scope" = "all" ]]; then {
+
+replaceone MTB_factor 0.0 0.2  $src  Trekking-MTB-light     "Trekking profile with light focus on unpaved roads, slightly penalizing mainroads."
+replaceone MTB_factor 0.0 1.0  $src  Trekking-MTB-strong    "Trekking profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
+replaceone MTB_factor 0.0 0.2  $src-wet  Trekking-MTB-light-wet     "Trekking wet weather profile with light focus on unpaved roads, slightly penalizing mainroads."
+replaceone MTB_factor 0.0 0.5  $src-wet  Trekking-MTB-medium-wet    "Trekking wet weather profile with medium focus on unpaved roads, moderately penalizing mainroads."
+replaceone MTB_factor 0.0 1.0  $src-wet  Trekking-MTB-strong-wet    "Trekking wet weather profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
+replaceone MTB_factor 0.0 -0.5 $src-wet  Trekking-Fast-wet          "Trekking wet weather profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
+ 
+replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  $src-wet MTB-wet "MTB wet weather profile, based on MTBiker feedback"
+replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  $src-wet MTB-light-wet "Light MTB wet weather profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong"
+ 
+replaceone cycleroutes_pref 0.2 0.0 $src      Trekking-ICR-dry  "Trekking profile ignoring existence of cycleroutes"
+replaceone cycleroutes_pref 0.2 0.0 $src-wet  Trekking-ICR-wet  "Trekking profile ignoring existence of cycleroutes, wet weather variant"
+replaceone cycleroutes_pref 0.2 0.5 $src      Trekking-FCR-dry  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes"
+replaceone cycleroutes_pref 0.2 0.5 $src-wet  Trekking-FCR-wet  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes, wet weather variant"
+replaceone cycleroutes_pref 0.2 0.8 $src      Trekking-LCR-dry  "Trekking profile for long distance cycleroutes"
+replaceone cycleroutes_pref 0.2 0.8 $src-wet  Trekking-LCR-wet  "Trekking profile for long distance cycleroutes, wet weather variant"
+ 
+replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 $src-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
+ 
+replaceone hills 1 4 $src  Trekking-Valley  "Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors."
+ 
+replaceone hills 1 5 $src  Trekking-No-Flat  "Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost."
+ 
+replacetwo MTB_factor 0.0 1.5 smallpaved_factor 0.0 -0.75  $src $src-tmp
+replaceone isbike_for_mainroads true false $src-tmp  Trekking-tracks "Trekking in Tracks mode, Strong preference of unpaved tracks and paths"
+rm $src-tmp.brf 
+ 
+ 
+replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -1.0  $src $src-tmp
+replacetwo isbike_for_mainroads true false  path_preference  0.0 20.0 $src-tmp  Trekking-hilly-paths "Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths"
+rm $src-tmp.brf 
+}
+fi
+
+closing
+
+}
+ 
+# ******************************************************
+#     B R O U T E R   C A R   P R O F I L E S
+# ******************************************************
+
+ 
+function car {
+        
+
+wdir
+ 
+archivefile=BR-Car-Profiles-$GithubBranch-$scope
+src=Car-test-Template
+ 
+legfile=$archivefile-Legend.txt
+ 
+wget  "$githubprofile/$carrep/$GithubBranch/$cartemp.brf"
+ 
+ 
+if [[ -f $legfile ]]; then rm "$legfile"; fi
+ 
+echo 'Profile name,  Profile description ( generated )'  >"$legfile" 
+ 
+replaceone avoid_toll      0 1 $src $src-TollFree
+replaceone avoid_motorways 0 1 $src $src-NoMotorway
+replaceone avoid_unpaved   0 1 $src $src-NoUnpaved
+ 
+replaceone drivestyle 2 3 $src  Car-Fast                "Car profile going for Speed - possible with booth or vignette tolls"
+replaceone drivestyle 2 1 $src  Car-Eco                 "Economic Car profile, fuel saving. Possible with booth or vignette tolls. May be slow."
+replaceone drivestyle 2 2 $src  Car-FastEco             "Car profile balancing Speed and Cost - RECOMMENDED"
+replaceone drivestyle 2 0 $src  Car-Short               "Car profile, shortest route, probably useless unless for technical emergency."
+ 
+replaceone drivestyle 2 3 $src-TollFree  Car-Fast-TollFree      "Toll free, Car profile going for Speed"
+replaceone drivestyle 2 2 $src-TollFree  Car-FastEco-TollFree   "Toll free, Car profile balancing Speed and Cost - RECOMMENDED"
+replaceone drivestyle 2 1 $src-TollFree  Car-Eco-TollFree       "Toll free, Car profile going for low cost - May be slow, as low cost speed is 60-80 km per h"
+ 
+replaceone drivestyle 2 3 $src-NoMotorway   Car-Fast-NoMotorway       "Car profile going for Speed - Avoiding motorways\/motorroads"
+replaceone drivestyle 2 3 $src-NoUnpaved  Car-Fast-NoUnpaved      "Car profile going for Speed - Avoiding unpaved ways"
+ 
+if [[ "$scope" = "all" ]]; then {
+ 
+replaceone drivestyle 2 2 $src-NoMotorway  Car-FastEco-NoMotorway    "Car profile balancing Speed and Cost - Avoiding motorways\/motorroads, RECOMMENDED"
+replaceone drivestyle 2 1 $src-NoMotorway   Car-Eco-NoMotorway        "Economic Car profile, fuel saving, Avoiding motorways\/motorroads, May be slow."
+ 
+replaceone drivestyle 2 2 $src-NoUnpaved Car-FastEco-NoUnpaved   "Car profile balancing Speed and Cost - Avoiding unpaved ways"
+replaceone drivestyle 2 1 $src-NoUnpaved  Car-Eco-NoUnpaved       "Car profile going for low cost - Avoiding unpaved ways - May be slow."
+ 
+replacetwo drivestyle 2 3  road_restriction 1 3  $src           Car-Fast-NoMinorRoads            "Fast profile avoiding unpaved and minor paved roads"
+replacetwo drivestyle 2 3  road_restriction 1 3  $src-TollFree  Car-Fast-TollFree-NoMinorRoads   "Fast tollfree profile avoiding unpaved and minor paved roads"
+ 
+replacetwo drivestyle 2 3  road_restriction 1 4  $src           Car-Fast-TertiaryRoads           "Fast long distance profile following tertiary and better roads"
+replacetwo drivestyle 2 3  road_restriction 1 4  $src-TollFree  Car-Fast-TollFree-TertiaryRoads  "Fast tollfree long distance profile following tertiary and better roads"
+ 
+replacetwo drivestyle 2 3  road_restriction 1 5  $src           Car-Fast-SecondaryRoads           "Fast long distance profile following secondary and better roads"
+replacetwo drivestyle 2 3  road_restriction 1 5  $src-TollFree  Car-Fast-TollFree-SecondaryRoads  "Fast tollfree long distance profile following secondary and better roads"
+ 
+replacetwo drivestyle 2 2  road_restriction 1 3  $src           Car-FastEco-NoMinorRoads            "FastEco profile avoiding unpaved and minor paved roads"
+replacetwo drivestyle 2 2  road_restriction 1 3  $src-TollFree  Car-FastEco-TollFree-NoMinorRoads   "FastEco tollfree profile avoiding unpaved and minor paved roads"
+ 
+replacetwo drivestyle 2 2  road_restriction 1 4  $src           Car-FastEco-TertiaryRoads           "FastEco long distance profile following tertiary and better roads"
+replacetwo drivestyle 2 2  road_restriction 1 4  $src-TollFree  Car-FastEco-TollFree-TertiaryRoads  "FastEco tollfree long distance profile following tertiary and better roads"
+ 
+replacetwo drivestyle 2 2  road_restriction 1 5  $src           Car-FastEco-SecondaryRoads           "FastEco long distance profile following secondary and better roads"
+replacetwo drivestyle 2 2  road_restriction 1 5  $src-TollFree  Car-FastEco-TollFree-SecondaryRoads  "FastEco tollfree long distance profile following secondary and better roads"
+}
+fi
+ 
+closing
+ 
+}
+
+# ******************************************************
+#     B R O U T E R   H I K I N G   P R O F I L E S
+# ******************************************************
+
+ 
+function foot {
+ 
+wdir
+ 
+archivefile=BR-Foot-Profiles-$GithubBranch-$scope
+src=Hiking-template
+ 
+legfile=$archivefile-Legend.txt
+ 
+ 
+wget "$githubprofile/$footrep/$GithubBranch/$foottemp.brf"
+ 
+mv $foottemp.brf $src.brf
+ 
+if [[ -f $legfile ]]; then rm $legfile ; fi
+echo 'Profile name,  Profile description ( generated )'  >$legfile 
+
+replaceone shortest_way  0 1 $src Shortest-P "Shortest way - implemented naviagtion hints."
+ 
+replaceone iswet 0 1 $src $src-wet
+# StrongHikingRoutePreference  SHRP
+replaceone  hiking_routes_preference  0.20 0.60 $src $src-SHRP
+# VeryStrongHikingRoutePreference  VSHRP
+replaceone  hiking_routes_preference  0.20 2.00 $src $src-VSHRP
+ 
+replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src  Walking "SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard"
+replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-wet  Walking-wet "SAC T1 - hiking - Wet variant"
+replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src  Hiking-SAC2 "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness"
+replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience "
+ 
+if [[ "$scope" = "all" ]]; then {
+ 
+replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience"
+replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope"
+replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src  Hiking-Alpine-SAC6 "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment"
+ 
+replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-SHRP  Walking-SAC1-SHRP "SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard, Strong Hiking Route Preference"
+replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src-SHRP  Hiking-SAC2-SHRP "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness, Strong Hiking Route Preference"
+replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src-SHRP  Hiking-Mountain-SAC3-SHRP "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience, Strong Hiking Route Preference "
+replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src-SHRP  Hiking-Alpine-SAC4-SHRP "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience, Strong Hiking Route Preference"
+replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src-SHRP  Hiking-Alpine-SAC5-SHRP "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope, Strong Hiking Route Preference"
+replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-SHRP  Hiking-Alpine-SAC6-SHRP "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment, Strong Hiking Route Preference"
+ 
+replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-VSHRP  Walking-SAC1-VSHRP "SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard, VERY Strong Hiking Route Preference"
+replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src-VSHRP  Hiking-SAC2-VSHRP "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness, VERY Strong Hiking Route Preference"
+replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src-VSHRP  Hiking-Mountain-SAC3-VSHRP "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience, VERY Strong Hiking Route Preference "
+replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src-VSHRP  Hiking-Alpine-SAC4-VSHRP "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience, VERY Strong Hiking Route Preference"
+replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src-VSHRP  Hiking-Alpine-SAC5-VSHRP "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope, VERY Strong Hiking Route Preference"
+replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-VSHRP  Hiking-Alpine-SAC6-VSHRP "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment, VERY Strong Hiking Route Preference"
+ 
+ 
+# replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-wet  Walking-wet "SAC T1 - hiking - Wet variant"
+# replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src-wet  Hiking-SAC2 "SAC T2 - mountain_hiking - Wet variant"
+# replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src-wet  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - Wet variant"
+# replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src-wet  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - Wet variant"
+# replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src-wet  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - Wet variant"
+# replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-wet  Hiking-Alpine-SAC6 "SAC T6 - difficult_alpine_hiking - Wet variant"
+};
+fi
+
+ 
+closing
+
+}
+ 
+# ******************************************************
+#                    C L O S I N G
+# ******************************************************
+ 
+function closing {
+ 
+rm $src*.brf
+ 
+if [[ -f ../$archivefile.zip ]]; then rm ../$archivefile.zip; fi
+zip ../$archivefile.zip ./*.brf "$legfile" -x ./$src*.brf
+
+if [[ $copy2brouter = "copy" && $termux2storage = true  ]]; then
+    cp ./*.brf "$profilespath"
+    cp "$legfile" "$profilespath"
+else
+    cp "$legfile" "../$legfile"
+fi
+rm ./*.brf "$legfile"
+cd ..
+}
+ 
+# ******************************************************
+#     E X E C U T I V E    S U B R O U T I N E S
+# ******************************************************
+ 
+function replaceone {
+ # parameters 1=keyword 2=oldvalue 3=newvalue 4=oldfile but ext 5=new file but ext  6=optionally Legend
+setrgx="s/\(assign\s\+$1\s\+\)$2/\1$3/gi"
+if [ -z "$6" ]
+then
+sed -b -e  "$setrgx"  "$4".brf  >"$5".brf 
+else
+sed -b -e  "$setrgx"  "$4".brf | sed -b -e "s/# LEGEND/# $6/" >"$5".brf
+echo "$5".brf, "$6" >>"$legfile"
+fi
+}
+ 
+function replacetwo {
+# parameters 1=keyword1 2=oldvalue1 3=newvalue2 4=keyword2 5=oldvalue2 6=newvalue2 7=oldfile but ext 8=new file but ext 9=optionally legend
+setrgx="s/\(assign\s\+$1\s\+\)$2/\1$3/gi"
+setrgx2="s/\(assign\s\+$4\s\+\)$5/\1$6/gi"
+if [[ -z  "$9" ]]; then
+sed -b -e "$setrgx" "$7".brf | sed -b -e  "$setrgx2"  >"$8".brf
+else
+sed -b -e "$setrgx" "$7".brf | sed -b -e  "$setrgx2" | sed -b -e "s/# LEGEND/# $9/"  >"$8".brf
+echo "$8".brf, "$9" >>"$legfile" 
+fi
+ }
+ 
+ 
+ # ******************************************************
+#               B R A N C H I N G
+# ******************************************************
+ 
+if [[ $# -eq 0 ]]; 
+then legend;
+else
+for arg in "$@"; do 
+if [[ "$arg" = "car" ]]; then car;
+elif [[ "$arg" = "bike" ]]; then bike;
+elif [[ "$arg" = "foot" ]]; then foot;
+elif [[ "$arg" = "develop" ]]; then GithubBranch="$arg";
+elif [[ "$arg" = "master"  ]]; then GithubBranch="$arg";
+elif [[ "$arg" = "main"  ]]; then scope="$arg";
+elif [[ "$arg" = "all"  ]]; then scope="$arg";
+elif [[ "$arg" = "copy"  ]]; then copy2brouter="$arg";
+elif [[ "$arg" = "nocopy"  ]]; then copy2brouter="$arg";
+fi
+
+done
+fi
+
