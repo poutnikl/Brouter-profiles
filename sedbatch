@@ -1,6 +1,12 @@
 #!/bin/bash
-#
-#********************** 
+# 
+# The script generates Brouter profiles from a reference to a profile template.
+# It can by run in a Linux terminal,
+# but it's true power comes if run in termux,
+# a powerful Linux terminal emulator for Android.
+
+#****** history **************** 
+
 # Ver 1.1 Fixed generation for Hiking-wet profiles ( by error identical to dry ones )
 # Ver 1.2 Parameter "main" generates only main/major profiles
 # Ver 1.2.1 Fixed names of Trekking-Dry/Wet profiles ( Was Poutnik instead of Trekking ])
@@ -8,14 +14,21 @@
 # Ver 1.3.2 windows batch ported to Linux Bash
 # Ver 1.4 Improved script parameter logic. Action paramaters are bike/car/foot, modifiers are master/develop and all/main
 #         Implemented termux path specifics and profike copying
-#
-# automatically generates a bunch of Brouter profiles 
+# Ver 1.5 Implemented modifiers local/git/remote
+#         Implemented modifiers copy/nocopy
+# Ver 1.6 Implemented support for other than Poutnik's profiles.
+
+
+# THe script automatically generates a bunch of Brouter profiles 
 # based on the bike/car/foot profile templates by Poutnik
+# additionally also on other profiles on Github
+# like zossebart's MTB, Jacobcs streetbike .
 #
 # When launched, 
 #   1/  it create a working subfolder in a folder where the script resides
-#   2/  it downloads latest bike/car/foot profile template from GitHub depository
-#   3/  it generates end user profiles by automatic subtitution of parameters
+#   2/  it downloads latest profile template from GitHub depository,
+#       or uses local git repository or the script folder storage.
+#   3/  it generates end user profiles by automatic substitution of assign parameters.
 #   4/  it packs them into a single ZIP archive and deletes the working subfolder content.
 #   5/  it optionally copies profiles to the scriot folder
 #          or from termux private space to Android storage.
@@ -41,57 +54,95 @@
 # 3 Execute "termux-setup-storage"
 #   if you want to grant termux permissions to write profile files out of its sandbox
 #   to be able to copy profiles to Android storage.
-#   It is recommendec not to copy directly to live profiles2 folder.
-#   (run "apt update && apt upgrade" to make sure that this tool is available)
+#   It is recommended not to copy directly to live profiles2 folder.
+#   Run "apt update && apt upgrade" to make sure that this tool is available.
 #   See  more at https://wiki.termux.com/wiki/Termux-setup-storage
 # 4 Check if sed and wget commands are available.
 #   If not, install them by "pkg install sed" resp. "pkg install wget"
-# 5 Check and define withing the script code
+# 5 Check and define within the script code
 #   your desired target folder for copying profiles.
 #   
-# 6 If run on Linux, or on termux without jailbreak
-#   ( the script is testing both )
-#   the optional (aside of zip with profiles)
-#   is redirected to the folder the scriot resides.
+# 6 If run on termux with access to Android storage,
+#   the optional copying of zipped profiles
+#   is pointed to the provided Android storage folder,
+#   otherwise the archive remains in the script folder..
 #
 # 7 Both Linux and termux expects placing the sedbatch script
-#    (subject of later renaming, remsins for historical reasons )
+#   into a dedicated folder.
+#    (subject of later renaming, it remains for historical reasons )
+# 8 (optional) if going to use git or pull sourve midifiers,
+#   you need to install git and clone repositories/branches of interest.
+
+
 #
-# 8  
-# The sedbatch.sh expects particular command line parameters to do anything.
-# "sedbatch.sh" without parameters lists this legend.
-# "sedbatch.sh" can be provided by arbitrary sequence of keywords:
-# bike car foot main all master develop copy nocopy           
+# USAGE
+
+# The sedbatch script expects particular command line parameters to do anything.
+
+# "sedbatch" without parameters lists the short info.
+
+# "sedbatch" <action> [<action> ..... ]
+# generates the respective set of Brouter profiles, zipped into a ZIP archive.
+
+# <action> ::=
+# <scope> ::= all | main
+# <branch> ::= master | develop
+# <copying> ::= nocopy | copy 
+# <source location> ::= remote | git | local
+# <profile_set> ::= bike | foot | car | mtb | street
+
+# The script can be provided by arbitrary sequence of above mentioned keywords:
+# bike car foot  mtb street  main all master develop copy nocopy remote local git          
 #
-# bike, car, foot are "action" keywords, generating respective profiles from a profile template
-# all(default), main are  modifiers, setting scope of generated profiles ( all or the most important)
-# master(default), develop are modifiers determining the github repository branch, where the profile template is located
-# nocopy(default), copy, copies profiles to Android storage ( jailbroken termux )
-# or to the script folder.
+# bike, car, foot, mtb, street are "action" keywords, generating respective profiles from a profile template.
+# mtb generates 4 variants of zossebart MTB profiles.
+# street generates 2 variants of Jacob's streetbike profikes
+
+# The rest of keywords are modifiers, changing the default values.
+# Note that their scope the whole keyword sequence, unless overridden by new value.
+
+# all(default), main 
+# are  modifiers, setting scope of generated profiles ( all or the most important)
+
+# master(default), develop
+# are modifiers determining the github repository branch, where the profile template is located
+#         ( if git modifier is used, they preform switching local git branches )
+
+# nocopy(default), copy
+# copy copies zipped profiles to orovidec Android storage
+# outside of the orivate termux space ( with jailbroken termux )
+
+# remote(default), git, local determined location of the script template 
+#   local=script folder, git=local git repository,  remote=remote github repository
+#   git and remote stores the template in locsl folder
+#   and remember what branch it came from.
+#   
 #
 # Examples of usage'
-# "sedbatch.sh bike" generates all profiles from bike trekking template
+
+# "sedbatch bike" generates all profiles from bike trekking template
 # and stores them in BR-Bike-Profiles-master-all.zip
 # and generates the all profiles for all car, bike and foot transportation modes
 #
-# "sedbatch.sh main develop bike" generates only selected major profiles from bike trekking template
+# "sedbatch main develop bike" generates only selected major profiles from bike trekking template
 # from develop branch
 #
-# "sedbatch.sh copy main foot all bike develop main car"
-# generates  major profiles for hiking, all profiles for bike trekking
+# "sedbatch copy main git foot all bike develop main car"
+# generates from local git repositories major profiles for hiking, all profiles for bike trekking
 # and selected profiles from car template develop branch.
-# Additionally, profiles are copied to selected folder
+# Additionally, the zipped profiles are copied to selected folder outside of termux
 #
 # ******************************************************
 #                     L E G E N D
 # ******************************************************
  
 function legend { 
-echo 'The sedbatch.sh expects particular command line parameters to do anything.'
-echo '"sedbatch.sh" can be provided by arbitrary sequence of following keywords:'
-echo 'bike car foot main all master develop copy nocopy'              
+
+echo 'The sedbatch script expects an arbitrary sequence of following keywords to do anything:'
+echo 'bike car foot mtb street main all master develop copy nocopy local remote git'              
 echo '.'
-echo 'bike, car, foot are "action" keywords, generating respective profiles from a profile template'
+echo 'bike, car, foot, mtb, street are "action" keywords, generating respective profiles from a profile template'
+echo '.'
 echo 'all(default), main set the scope of generated profiles ( all or the most important)'
 echo 'master(default), develop are modifiers determining the github repository branch, where the profile template is located'
 echo '.'
@@ -101,100 +152,337 @@ echo '.'
 echo 'for examples and more info, see the legend comments withing the script.'
 
 }
+
+
+# ******************************************************
+#                   M  A  I  N 
+# ******************************************************
+
+function main {
  
-# ******************************************************
-#   V A R I A B L E S   A N D   P R E C H E C K S
-# ******************************************************
-#termux path to termux home folder
-termuxhome=/data/data/com.termux/files/home
-if [[ -d $termuxhome ]]; then
-  ontermux=true
-else
-  ontermux=false
-fi
-#termux link to internal storage
-prefixtostorage=~/storage/shared
+# ***************   V A R I A B L E S ******************
+
+
+#termux relative path from $HOME
+# to Android internal storage (if termux is jailbroken)
+STORAGE_PREFIX=~/storage/shared
+
+# Brouter target folder relative paths from termux home.
+BRPATH=~/storage/shared/Brouter/myprofiles
+
+# the folder holding your local git repositories
+LOCAL_GIT_ROOT=$HOME
+
+#relative working folder for SED based manipulations
+SEDWDIR=sedwdir
+
+#https://stackoverflow.com/questions/59895/get-the-source-directory-of-a-bash-script-from-within-the-script-itself
+script_folder="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+#Default values of modifiers
+github_branch=master #branch master or develop
+scope=all           #scope all or main
+copy_to_brouter=nocopy #copy or nocopy
+source=remote       #remote or git or local
+
+#Repository and template names
+# Essential rewuirement is to keep consistently
+# the keyword like "bike" in the vsriable names
+
+
+GH_PROF_POUTNIK='https://raw.githubusercontent.com/poutnikl'
+
+bikerep='Trekking-Poutnik'
+biketemp=$bikerep
+bikeprof=$GH_PROF_POUTNIK
+legend_prefix_bike="BR-Bike-Profiles"
+
+footrep='Hiking-Poutnik'
+foottemp='Hiking'
+footprof=$GH_PROF_POUTNIK
+legend_prefix_foot="BR-Foot-Profiles"
+
+carrep='Car-Profile'
+cartemp='Car-test-Template'
+carprof=$GH_PROF_POUTNIK
+legend_prefix_car="BR-Car-Profiles"
+
+GH_PROF_ZOSSEBART='https://raw.githubusercontent.com/zossebart'
+#https://github.com/zossebart/brouter-mtb
+mtbrep='brouter-mtb'
+mtbtemp='mtb-zossebart'
+mtbprof=$GH_PROF_ZOSSEBART
+legend_prefix_mtb="BR-MTBzoss-Profiles"
+
+GH_PROF_UTACK='https://raw.githubusercontent.com/utack'
+#https://github.com/utack/utack_brouter_profile
+streetrep='utack_brouter_profile'
+streettemp='streetbike_touring'
+streetprof=$GH_PROF_UTACK
+legend_prefix_street="BR-StrBike-Profiles"
+
+# *************    P R E C H E C K S    **************
 
 #Is termux jailbreak set ?
-if [[ $ontermux = true && -d $prefixtostorage ]]; then
+if [[ -L $STORAGE_PREFIX ]]; then # termux is jailbroken
+  # running on jailbroken termux and can access android storage
   termux2storage=true
-else
+  ifcd  $STORAGE_PREFIX
+  brouterpath="$BRPATH"
+  ifcd $BRPATH 
+ 
+else # No termux or termux is not jailbroken
   termux2storage=false
-fi
-
-githubprofile=https://raw.githubusercontent.com/poutnikl
-brouterlinuxpath=.. #in the folder of the script.
-broutertermuxpath="$prefixtostorage/Brouter"
-
-if [[ $termux2storage = true ]]; then
-  brouterpath="$broutertermuxpath"
-else
-  brouterpath="$brouterlinuxpath"
-fi
-
-if [[ $termux2storage = true && ! -d $brouterpath  ]]; then
-  echo The folder $brouterpath does not exist.
-  exit
-elif [[ $termux2storage = true ]]; then
-  profilespath="$brouterpath/myprofiles"
-else
+  brouterpath="$brouter_linux_path"
   profilespath="$brouterpath"
 fi
 
+ifcd "$script_folder"
+
+# *********   P A R A M E T E R  L O O P   *************
 
 
-if [[ $termux2storage = true && ! -d "$profilespath"  ]]; then
-  mkdir "$profilespath" || {
-  echo The folder $profilespath could not be created.
-  exit
-  }
+if [[ -z "$1" ]]; then
+  legend;
+else
+  for arg in "$@"; do 
+    case $arg in
+      car|bike|foot|mtb|street) profgenprep "$arg";;
+      develop|master) github_branch="$arg";;
+      main|all) scope="$arg";;
+      copy) [[ $termux2storage = true ]] && copy_to_brouter=copy || copy_to_brouter=nocopy;;
+      nocopy) copy_to_brouter=nocopy;;
+      local|remote|git|pull) source="$arg";;
+      *) echo "An unknown parameter $arg"; legend;;
+    esac
+  done
 fi
 
-#Default values of modifiers
-GithubBranch=master #branch master or develop
-scope=all           #scope all or main
-copy2brouter=nocopy #copy or nocopy
+} #   M A I N     E N D
+# ******************************************************
 
-#Repository and template names
-bikerep=Trekking-Poutnik
-biketemp=Trekking-Poutnik
-footrep=Hiking-Poutnik
-foottemp=Hiking
-carrep=Car-Profile
-cartemp=Car-test-Template
 
+# ******************************************************
+#     P R O F I L E S   G E N    P R E P
+# ******************************************************
 
  
+function profgenprep {  #$1=bike/foot/car/mtb/street 
+
+if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "mtb" || $1 = "street" ]]; then 
+
+  modus=$1 
+  #If $modus=bike then repos=bikerep,  $template=biketemp, $profile=bikeprof
+  echo "Modus is :$modus"
+
+  case "$modus" in 
+    bike) repos="$bikerep" ;  template="$biketemp";  profile="$bikeprof"; legend_prefix="$legend_prefix_bike" ;;
+    foot) repos="$footrep" ;  template="$foottemp";  profile="$footprof"; legend_prefix="$legend_prefix_foot" ;;
+    car) repos="$carrep"   ;  template="$cartemp" ;  profile="$carprof" ; legend_prefix="$legend_prefix_car" ;;
+    mtb) repos="$mtbrep"   ;  template="$mtbtemp" ;  profile="$mtbprof" ; legend_prefix="$legend_prefix_mtb" ;; 
+    street) repos="$streetrep"; template="$streettemp"; profile="$streetprof"; legend_prefix="$legend_prefix_street" ;;  
+    *)  echo "there is no such a mode as the $modus" ;  exit ;;
+  esac      
+
+  echo repos "$repos"
+  echo template "$template"
+  echo profile "$profile"
+  echo legend_prefix "$legend_prefix"
+  echo source "$source"
+  echo branch "$github_branch"
+
+
+  # modifier "local" reads template from the script folder,
+  # it uses the file from the last used
+  #  either local  git, either remote github source
+  # script breaks if the file is not found.
+
+  if [[ $source = "local" ]]; then
+    ifcd "$script_folder"
+    sourcefile="$script_folder/$template.brf"
+    [[ -f "$sourcefile" ]] || { echo "$sourcefile does not exist" ; exit;}
+    
+    source_branch "$template" "$github_branch" "get"
+    if [[ $? -eq  0 ]]; then
+      echo "The requested branch does not match the local one."
+      exit
+    fi
+    
+    # modifier "git" reads template from local git repository and branch.
+    # and copy it to the script folder.
+    # script breaks if the repo or branch are not found.
+    
+  elif [[ $source = "git" || $source = "pull" ]]; then
+    ifcd "$LOCAL_GIT_ROOT"
+    ifcd "$repos"
+    git checkout "$github_branch" || { echo "The branch $github_branch in $LOCAL_GIT_ROOT/$repos does not exist.";  exit; }
+    sourcefile="$LOCAL_GIT_ROOT/$repos/$template.brf"
+    [[ ! -f "$sourcefile" ]] && { echo "$sourcefile does not exist" ; exit;}
+   
+    [[ $source = "pull" ]] && { git fetch; git pull; }
+    
+    cp "$sourcefile"  "$script_folder" || { echo "copying $sourcefile to $script_folder is not possible" ; exit; }
+    ifcd "$script_folder"
+    sourcefile="$script_folder/$template.brf"
+    
+    source_branch "$template" "$github_branch" "set"
+
+  # modifier "remote" reads template from remote github repository and branch.
+  # and copy it to the script folder.
+  # script breaks if the repo or branch are not found.
+
+  elif [[ $source = "remote" ]]; then
+    cd "$script_folder" || { echo "$script_folder does not exist or no access there.";  exit; }
+    sourcefile="$profile/$repos/$github_branch/$template.brf"
+    wget -N "$sourcefile" || { echo "$sourcefile could not be retrieved."; exit; } 
+
+    sourcefile="$script_folder/$template.brf"
+
+    source_branch "$template" "$github_branch" "set"
+
+  fi
+  echo "local file: $sourcefile"
+  
+  wdir
+
+  archivefile=$legend_prefix-$github_branch-$scope
+  legfile=$archivefile-Legend.txt
+   
+  [[ -f $legfile ]] && rm "$legfile" 
+  echo 'Profile name,  Profile description ( generated )'  >"$legfile" 
+
+  case $modus in
+     (bike)   bikeexec;;
+     (foot)   footexec;;
+     (car)    carexec;;
+     (mtb)    mtbexec;;
+     (street) streetexec;;
+     (*)      Echo "No such an execution mode as $modus"
+  esac
+
+  closing
+
+fi
+
+}
+
+# *****************
+
+function source_branch { 
+#$template $branch $set/get
+
+#creates/get a flag file about the github branch
+#the file came from
+    if [[ $3 = "set" ]]; then
+      if [[ -f "$script_folder/.$1-*" ]]; then
+        rm "$script_folder/.$1-*"
+      fi
+     echo "" >"$script_folder/.$1-$2"
+    elif [[ $3 = "get" ]]; then
+      if [[ -f "$script_folder/.$1-$2" ]]; then
+        return 1
+      else
+        return 0
+      fi
+    fi
+
+}
+
 # ******************************************************
 #                     W D I R
 # ******************************************************
 function wdir {
-[[ ! -d "./sedwdir" ]]  && mkdir  "./sedwdir"
-cd ./sedwdir || return
-rm  ./*.brf
+  sedwdir="$script_folder/$SEDWDIR"
+  if [[ ! -d "$sedwdir" ]]; then
+    mkdir  "$sedwdir" || { echo "$sedwdir could not be created"; exit; } 
+  fi  
+  ifcd "$sedwdir" 
+
+  [[ -f "$sedwdir/*.brf" ]]        &&  rm  "$sedwdir/*.brf"
+  [[ -f "$sedwdir/*legend.txt" ]]  &&  rm  "$sedwdir/*legend.txt"
+
+  [[ ! $modus = foot ]] && src="$template" || src="$template-template"
+
+  cp "$sourcefile" "$sedwdir/$src.brf" || { echo "$sourcefile $sedwdir/$src.brf could not be done"; exit; } 
+
 }
  
+# ******************************************************
+#                    C L O S I N G
+# ******************************************************
+ 
+function closing {
+
+ifcd "$sedwdir" 
+rm $src.brf || echo "rm $src.brf could not be done."
+ 
+if [[ -f "$script_folder/$archivefile.zip" ]]; then
+  rm "$script_folder/$archivefile.zip"
+fi
+zip "$script_folder/$archivefile.zip" *.brf "$legfile" -x $src.brf
+cp "$sedwdir/$legfile" "$script_folder/$legfile" || echo "Copying $sedwdir/$legfile to $script_folder/$legfile is not possible";
+
+ifcd "$script_folder"
+
+if [[ $copy_to_brouter = copy ]]; then
+    cp "$archivefile.zip"  $BRPATH
+    cp "$legfile"  $BRPATH
+fi
+
+ifcd "$sedwdir"
+rm -f *.brf
+rm -f "$legfile"
+
+ifcd "$script_folder"
+
+}
+
+# ************ ifcd ************
+
+function ifcd {
+  cd "$1" || { 
+   if [[ -d "$1" ]]; then
+     echo "cd: The script does not have access to the folder $1. - Exit"
+   else
+     echo "cd: The folder $1 does not exist. - Exit"
+   fi
+   exit; }
+} 
 
 # ******************************************************
-#     B R O U T E R   B I C Y C L E   P R O F I L E S
+#     E X E C U T I V E    S U B R O U T I N E S
+# ******************************************************
+ 
+function replaceone {
+ # parameters 1=keyword 2=oldvalue 3=newvalue 4=oldfile but ext 5=new file but ext  6=optionally Legend
+setrgx="s/\(assign\s\+$1\(\s\|=\)\+\)$2/\1$3/gi"
+if [ -z "$6" ]
+then
+sed -b -e  "$setrgx"  "$4".brf  >"$5".brf 
+else
+sed -b -e  "$setrgx"  "$4".brf | sed -b -e "s/# LEGEND/# $6/" >"$5".brf
+echo "$5".brf, "$6" >>"$legfile"
+fi
+}
+ 
+function replacetwo {
+# parameters 1=keyword1 2=oldvalue1 3=newvalue2 4=keyword2 5=oldvalue2 6=newvalue2 7=oldfile but ext 8=new file but ext 9=optionally legend
+setrgx="s/\(assign\s\+$1\(\s\|=\)\+\)$2/\1$3/gi"
+setrgx2="s/\(assign\s\+$4\(\s\|=\)\+\)$5/\1$6/gi"
+if [[ -z  "$9" ]]; then
+sed -b -e "$setrgx" "$7".brf | sed -b -e  "$setrgx2"  >"$8".brf
+else
+sed -b -e "$setrgx" "$7".brf | sed -b -e  "$setrgx2" | sed -b -e "s/# LEGEND/# $9/"  >"$8".brf
+echo "$8".brf, "$9" >>"$legfile" 
+fi
+}
+ 
+ 
+# ******************************************************
+#     B I C Y C L E   P R O F I L E S   E X E C
 # ******************************************************
 
- 
-function bike {
- 
-wdir
-
-src=$biketemp
-archivefile=BR-Bike-Profiles-$GithubBranch-$scope
- 
-legfile=$archivefile-Legend.txt
- 
-wget  "$githubprofile/$bikerep/$GithubBranch/$biketemp.brf"
- 
- 
-[[ -f $legfile ]] && rm "$legfile" 
- 
-echo 'Profile name,  Profile description ( generated )'  >"$legfile" 
+function bikeexec {
  
 replaceone iswet 0 1 $src $src-wet
  
@@ -223,10 +511,14 @@ replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  $src-wet MTB-light-wet
  
 replaceone cycleroutes_pref 0.2 0.0 $src      Trekking-ICR-dry  "Trekking profile ignoring existence of cycleroutes"
 replaceone cycleroutes_pref 0.2 0.0 $src-wet  Trekking-ICR-wet  "Trekking profile ignoring existence of cycleroutes, wet weather variant"
-replaceone cycleroutes_pref 0.2 0.5 $src      Trekking-FCR-dry  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes"
-replaceone cycleroutes_pref 0.2 0.5 $src-wet  Trekking-FCR-wet  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes, wet weather variant"
+replaceone cycleroutes_pref 0.2 0.5 $src      Trekking-FCR-dry  "Trekking profile more following cycleroutes, expecially long distance ones"
+replaceone cycleroutes_pref 0.2 0.5 $src-wet  Trekking-FCR-wet  "Trekking profile more following cycleroutes, expecially long distance ones, wet weather variant"
 replaceone cycleroutes_pref 0.2 0.8 $src      Trekking-LCR-dry  "Trekking profile for long distance cycleroutes"
 replaceone cycleroutes_pref 0.2 0.8 $src-wet  Trekking-LCR-wet  "Trekking profile for long distance cycleroutes, wet weather variant"
+ 
+replaceone hills 1 2 Trekking-FCR-dry Trekking-FCR-dry-hills2   "Trekking profile ignoring existence of cycleroutes"
+replaceone hills 1 2 Trekking-FCR-wet Trekking-FCR-dry-hills2   "Trekking profile ignoring existence of cycleroutes, wet weather variant"
+
  
 replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 $src-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
  
@@ -245,31 +537,13 @@ rm $src-tmp.brf
 }
 fi
 
-closing
+} #  B I C Y C L E   P R O F I L E S   E X E C
 
-}
- 
 # ******************************************************
-#     B R O U T E R   C A R   P R O F I L E S
+#        C A R   P R O F I L E S   E X E C
 # ******************************************************
 
- 
-function car {
-        
-
-wdir
- 
-archivefile=BR-Car-Profiles-$GithubBranch-$scope
-src=Car-test-Template
- 
-legfile=$archivefile-Legend.txt
- 
-wget  "$githubprofile/$carrep/$GithubBranch/$cartemp.brf"
- 
- 
-if [[ -f $legfile ]]; then rm "$legfile"; fi
- 
-echo 'Profile name,  Profile description ( generated )'  >"$legfile" 
+function carexec {
  
 replaceone avoid_toll      0 1 $src $src-TollFree
 replaceone avoid_motorways 0 1 $src $src-NoMotorway
@@ -315,31 +589,13 @@ replacetwo drivestyle 2 2  road_restriction 1 5  $src-TollFree  Car-FastEco-Toll
 }
 fi
  
-closing
- 
-}
+} #  C A R   P R O F I L E S   E X E C
 
 # ******************************************************
-#     B R O U T E R   H I K I N G   P R O F I L E S
+#    H I K I N G   P R O F I L E S   E X E C 
 # ******************************************************
 
- 
-function foot {
- 
-wdir
- 
-archivefile=BR-Foot-Profiles-$GithubBranch-$scope
-src=Hiking-template
- 
-legfile=$archivefile-Legend.txt
- 
- 
-wget "$githubprofile/$footrep/$GithubBranch/$foottemp.brf"
- 
-mv $foottemp.brf $src.brf
- 
-if [[ -f $legfile ]]; then rm $legfile ; fi
-echo 'Profile name,  Profile description ( generated )'  >$legfile 
+function footexec {
 
 replaceone shortest_way  0 1 $src Shortest-P "Shortest way - implemented naviagtion hints."
  
@@ -354,7 +610,7 @@ replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-wet  Walking-wet "SA
 replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src  Hiking-SAC2 "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness"
 replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience "
  
-if [[ "$scope" = "all" ]]; then {
+if [[ "$scope" = "all" ]]; then 
  
 replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience"
 replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope"
@@ -381,83 +637,43 @@ replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-VSHRP  Hiking-Alpine
 # replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src-wet  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - Wet variant"
 # replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src-wet  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - Wet variant"
 # replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-wet  Hiking-Alpine-SAC6 "SAC T6 - difficult_alpine_hiking - Wet variant"
-};
+
 fi
 
+} #  H I K I N G   P R O F I L E S   E X E C 
+
  
-closing
+# ******************************************************
+#     M T B   P R O F I L E S   E X E C
+# ******************************************************
+
+function mtbexec { 
+
+replaceone is_wet 0 0 $src     mtbzoss-dry 
+replaceone is_wet 0 1 $src     mtbzoss-wet 
+
+replaceone mtb_hard_factor 0 1 mtbzoss-dry    mtbzoss-hard-dry 
+replaceone mtb_hard_factor 0 1 mtbzoss-wet    mtbzoss-hard-wet 
+
+ 
+mtb_hard_factor
+}
+
+# ******************************************************
+#     S T R E E T   P R O F I L E S   E X E C
+# ******************************************************
+
+function streetexec { 
+
+replaceone iswet false false $src     Street-dry 
+replaceone iswet false true  $src     Street-wet 
+ 
 
 }
- 
-# ******************************************************
-#                    C L O S I N G
-# ******************************************************
- 
-function closing {
- 
-rm $src*.brf
- 
-if [[ -f ../$archivefile.zip ]]; then rm ../$archivefile.zip; fi
-zip ../$archivefile.zip ./*.brf "$legfile" -x ./$src*.brf
 
-if [[ $copy2brouter = "copy" && $termux2storage = true  ]]; then
-    cp ./*.brf "$profilespath"
-    cp "$legfile" "$profilespath"
-else
-    cp "$legfile" "../$legfile"
-fi
-rm ./*.brf "$legfile"
-cd ..
-}
- 
-# ******************************************************
-#     E X E C U T I V E    S U B R O U T I N E S
-# ******************************************************
- 
-function replaceone {
- # parameters 1=keyword 2=oldvalue 3=newvalue 4=oldfile but ext 5=new file but ext  6=optionally Legend
-setrgx="s/\(assign\s\+$1\s\+\)$2/\1$3/gi"
-if [ -z "$6" ]
-then
-sed -b -e  "$setrgx"  "$4".brf  >"$5".brf 
-else
-sed -b -e  "$setrgx"  "$4".brf | sed -b -e "s/# LEGEND/# $6/" >"$5".brf
-echo "$5".brf, "$6" >>"$legfile"
-fi
-}
- 
-function replacetwo {
-# parameters 1=keyword1 2=oldvalue1 3=newvalue2 4=keyword2 5=oldvalue2 6=newvalue2 7=oldfile but ext 8=new file but ext 9=optionally legend
-setrgx="s/\(assign\s\+$1\s\+\)$2/\1$3/gi"
-setrgx2="s/\(assign\s\+$4\s\+\)$5/\1$6/gi"
-if [[ -z  "$9" ]]; then
-sed -b -e "$setrgx" "$7".brf | sed -b -e  "$setrgx2"  >"$8".brf
-else
-sed -b -e "$setrgx" "$7".brf | sed -b -e  "$setrgx2" | sed -b -e "s/# LEGEND/# $9/"  >"$8".brf
-echo "$8".brf, "$9" >>"$legfile" 
-fi
- }
- 
- 
- # ******************************************************
-#               B R A N C H I N G
-# ******************************************************
- 
-if [[ $# -eq 0 ]]; 
-then legend;
-else
-for arg in "$@"; do 
-if [[ "$arg" = "car" ]]; then car;
-elif [[ "$arg" = "bike" ]]; then bike;
-elif [[ "$arg" = "foot" ]]; then foot;
-elif [[ "$arg" = "develop" ]]; then GithubBranch="$arg";
-elif [[ "$arg" = "master"  ]]; then GithubBranch="$arg";
-elif [[ "$arg" = "main"  ]]; then scope="$arg";
-elif [[ "$arg" = "all"  ]]; then scope="$arg";
-elif [[ "$arg" = "copy"  ]]; then copy2brouter="$arg";
-elif [[ "$arg" = "nocopy"  ]]; then copy2brouter="$arg";
-fi
+# ****************************************************
+#    M A I N     E X E C 
 
-done
-fi
+main "$@"
+
 
