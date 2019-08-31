@@ -654,9 +654,7 @@ replaceone is_wet 0 1 $src     mtbzoss-wet
 
 replaceone mtb_hard_factor 0 1 mtbzoss-dry    mtbzoss-hard-dry 
 replaceone mtb_hard_factor 0 1 mtbzoss-wet    mtbzoss-hard-wet 
-
  
-mtb_hard_factor
 }
 
 # ******************************************************
