@@ -85,7 +85,7 @@
 # generates the respective set of Brouter profiles, zipped into a ZIP archive.
 
 # <action> ::=
-# <scope> ::= all | main
+# <scope> ::= all | main | locus
 # <branch> ::= master | develop
 # <copying> ::= nocopy | copy 
 # <source location> ::= remote | git | local
@@ -249,7 +249,7 @@ else
     case $arg in
       car|bike|foot|mtb|street) profgenprep "$arg";;
       develop|master) github_branch="$arg";;
-      main|all) scope="$arg";;
+      main|all|locus) scope="$arg";;
       copy) [[ $termux2storage = true ]] && copy_to_brouter=copy || copy_to_brouter=nocopy;;
       nocopy) copy_to_brouter=nocopy;;
       local|remote|git|pull) source="$arg";;
@@ -484,11 +484,14 @@ fi
 
 function bikeexec {
  
-replaceone iswet 0 1 $src $src-wet
- 
-replaceone iswet 0 0 $src     Trekking-dry "Standard Trekking profile by Poutnik, for dry weather"
-replaceone iswet 0 1 $src-wet Trekking-wet 'Standard Trekking profile by Poutnik, for wet weather ( partially avoids muddy or slicky surface, but does not forbid them )'
- 
+
+replaceone is_wet 0 0 $src     Trekking-dry "Standard Trekking profile by Poutnik"
+
+if [[ ! "$scope" = "locus" ]]; then
+  replaceone is_wet 0 1 $src $src-wet
+  replaceone iswet 0 1 $src-wet Trekking-wet 'Standard Trekking profile by Poutnik, for wet weather ( partially avoids muddy or slicky surface, but does not forbid them )'
+fi 
+
 replaceone MTB_factor 0.0 0.5  $src  Trekking-MTB-medium    "Trekking profile with medium focus on unpaved roads, moderately penalizing mainroads."
 replaceone MTB_factor 0.0 -0.5 $src  Trekking-Fast          "Trekking profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
  
@@ -497,31 +500,19 @@ replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  $src    MTB-light "Lig
  
 replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 $src       Trekking-SmallRoads       "Trekking profile more preferring small paved roads and tracks"
  
-if [[ "$scope" = "all" ]]; then {
+if [[ "$scope" = "all" || "$scope" = "locus"   ]]; then {
 
 replaceone MTB_factor 0.0 0.2  $src  Trekking-MTB-light     "Trekking profile with light focus on unpaved roads, slightly penalizing mainroads."
 replaceone MTB_factor 0.0 1.0  $src  Trekking-MTB-strong    "Trekking profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
-replaceone MTB_factor 0.0 0.2  $src-wet  Trekking-MTB-light-wet     "Trekking wet weather profile with light focus on unpaved roads, slightly penalizing mainroads."
-replaceone MTB_factor 0.0 0.5  $src-wet  Trekking-MTB-medium-wet    "Trekking wet weather profile with medium focus on unpaved roads, moderately penalizing mainroads."
-replaceone MTB_factor 0.0 1.0  $src-wet  Trekking-MTB-strong-wet    "Trekking wet weather profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
-replaceone MTB_factor 0.0 -0.5 $src-wet  Trekking-Fast-wet          "Trekking wet weather profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
+  
+replaceone cycleroutes_pref 0.2 0.0 $src      Trekking-ICR  "Trekking profile ignoring existence of cycleroutes"
+replaceone cycleroutes_pref 0.2 0.5 $src      Trekking-FCR  "Trekking profile more following cycleroutes, expecially long distance ones"
+replaceone cycleroutes_pref 0.2 0.8 $src      Trekking-LCR  "Trekking profile for long distance cycleroutes"
  
-replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  $src-wet MTB-wet "MTB wet weather profile, based on MTBiker feedback"
-replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  $src-wet MTB-light-wet "Light MTB wet weather profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong"
- 
-replaceone cycleroutes_pref 0.2 0.0 $src      Trekking-ICR-dry  "Trekking profile ignoring existence of cycleroutes"
-replaceone cycleroutes_pref 0.2 0.0 $src-wet  Trekking-ICR-wet  "Trekking profile ignoring existence of cycleroutes, wet weather variant"
-replaceone cycleroutes_pref 0.2 0.5 $src      Trekking-FCR-dry  "Trekking profile more following cycleroutes, expecially long distance ones"
-replaceone cycleroutes_pref 0.2 0.5 $src-wet  Trekking-FCR-wet  "Trekking profile more following cycleroutes, expecially long distance ones, wet weather variant"
-replaceone cycleroutes_pref 0.2 0.8 $src      Trekking-LCR-dry  "Trekking profile for long distance cycleroutes"
-replaceone cycleroutes_pref 0.2 0.8 $src-wet  Trekking-LCR-wet  "Trekking profile for long distance cycleroutes, wet weather variant"
- 
-replaceone hills 1 2 Trekking-FCR-dry Trekking-FCR-dry-hills2   "Trekking profile ignoring existence of cycleroutes"
-replaceone hills 1 2 Trekking-FCR-wet Trekking-FCR-dry-hills2   "Trekking profile ignoring existence of cycleroutes, wet weather variant"
+replaceone hills 1 2 Trekking-FCR Trekking-FCR-hills2   "Trekking profile ignoring existence of cycleroutes"
+replaceone hills 1 2 Trekking-LCR Trekking-LCR-hills2   "Trekking profile ignoring existence of cycleroutes"
 
- 
-replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 $src-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
- 
+
 replaceone hills 1 4 $src  Trekking-Valley  "Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors."
  
 replaceone hills 1 5 $src  Trekking-No-Flat  "Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost."
@@ -534,6 +525,29 @@ rm $src-tmp.brf
 replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -1.0  $src $src-tmp
 replacetwo isbike_for_mainroads true false  path_preference  0.0 20.0 $src-tmp  Trekking-hilly-paths "Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths"
 rm $src-tmp.brf 
+}
+fi
+
+if [[ "$scope" = "all"  ]]; then {
+
+replaceone MTB_factor 0.0 0.2  $src-wet  Trekking-MTB-light-wet     "Trekking wet weather profile with light focus on unpaved roads, slightly penalizing mainroads."
+replaceone MTB_factor 0.0 0.5  $src-wet  Trekking-MTB-medium-wet    "Trekking wet weather profile with medium focus on unpaved roads, moderately penalizing mainroads."
+replaceone MTB_factor 0.0 1.0  $src-wet  Trekking-MTB-strong-wet    "Trekking wet weather profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
+replaceone MTB_factor 0.0 -0.5 $src-wet  Trekking-Fast-wet          "Trekking wet weather profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
+ 
+replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  $src-wet MTB-wet "MTB wet weather profile, based on MTBiker feedback"
+replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  $src-wet MTB-light-wet "Light MTB wet weather profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong"
+ 
+replaceone cycleroutes_pref 0.2 0.0 $src-wet  Trekking-ICR-wet  "Trekking profile ignoring existence of cycleroutes, wet weather variant"
+replaceone cycleroutes_pref 0.2 0.5 $src-wet  Trekking-FCR-wet  "Trekking profile more following cycleroutes, expecially long distance ones, wet weather variant"
+replaceone cycleroutes_pref 0.2 0.8 $src-wet  Trekking-LCR-wet  "Trekking profile for long distance cycleroutes, wet weather variant"
+ 
+replaceone hills 1 2 Trekking-FCR-wet Trekking-FCR-wet-hills2   "Trekking profile ignoring existence of cycleroutes, wet weather variant"
+replaceone hills 1 2 Trekking-LCR-wet Trekking-LCR-wet-hills2   "Trekking profile ignoring existence of cycleroutes, wet weather variant"
+
+ 
+replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 $src-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
+  
 }
 fi
 
@@ -649,12 +663,10 @@ fi
 
 function mtbexec { 
 
-replaceone is_wet 0 0 $src     mtbzoss-dry 
-replaceone is_wet 0 1 $src     mtbzoss-wet 
+replaceone is_wet 0 0 $src     mtbzoss
 
-replaceone mtb_hard_factor 0 1 mtbzoss-dry    mtbzoss-hard-dry 
-replaceone mtb_hard_factor 0 1 mtbzoss-wet    mtbzoss-hard-wet 
- 
+replaceone mtb_hard_factor 0 1 mtbzoss   mtbzoss-hard
+
 }
 
 # ******************************************************
