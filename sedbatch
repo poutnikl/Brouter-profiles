@@ -57,8 +57,8 @@
 #   It is recommended not to copy directly to live profiles2 folder.
 #   Run "apt update && apt upgrade" to make sure that this tool is available.
 #   See  more at https://wiki.termux.com/wiki/Termux-setup-storage
-# 4 Check if sed and wget commands are available.
-#   If not, install them by "pkg install sed" resp. "pkg install wget"
+# 4 Check if commands sed, wget, zip, optionally git are available.
+#   If not, install them by "pkg install command"
 # 5 Check and define within the script code
 #   your desired target folder for copying profiles.
 #   
@@ -512,9 +512,7 @@ replaceone cycleroutes_pref 0.2 0.8 $src      Trekking-LCR  "Trekking profile fo
 replaceone hills 1 2 Trekking-FCR Trekking-FCR-hills2   "Trekking profile ignoring existence of cycleroutes"
 replaceone hills 1 2 Trekking-LCR Trekking-LCR-hills2   "Trekking profile ignoring existence of cycleroutes"
 
-
 replaceone hills 1 4 $src  Trekking-Valley  "Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors."
- 
 replaceone hills 1 5 $src  Trekking-No-Flat  "Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost."
  
 replacetwo MTB_factor 0.0 1.5 smallpaved_factor 0.0 -0.75  $src $src-tmp
@@ -524,6 +522,11 @@ rm $src-tmp.brf
  
 replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -1.0  $src $src-tmp
 replacetwo isbike_for_mainroads true false  path_preference  0.0 20.0 $src-tmp  Trekking-hilly-paths "Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths"
+
+replaceone tandem_mode 0 1 $src  Trek_tandem  "Trekking on a tandem bike addressing the tandem manipulation specifics"
+replaceone ignore_cycle_barrier 1 0 Trek_tandem  Trek_tandem_barr  "Trekking on a tandem bike, respwcting bike barriers"
+ 
+
 rm $src-tmp.brf 
 }
 fi
@@ -612,19 +615,22 @@ fi
 function footexec {
 
 replaceone shortest_way  0 1 $src Shortest-P "Shortest way - implemented naviagtion hints."
- 
-replaceone iswet 0 1 $src $src-wet
+
+if [[ ! "$scope" = "locus" ]]; then
+  replaceone is_wet 0 1 $src $src-wet
+  replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-wet  Walking-wet "SAC T1 - hiking - Wet variant"
+fi 
+
 # StrongHikingRoutePreference  SHRP
 replaceone  hiking_routes_preference  0.20 0.60 $src $src-SHRP
 # VeryStrongHikingRoutePreference  VSHRP
 replaceone  hiking_routes_preference  0.20 2.00 $src $src-VSHRP
  
 replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src  Walking "SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard"
-replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-wet  Walking-wet "SAC T1 - hiking - Wet variant"
 replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src  Hiking-SAC2 "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness"
 replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience "
  
-if [[ "$scope" = "all" ]]; then 
+if [[ "$scope" = "all" || "$scope" = "locus" ]]; then 
  
 replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience"
 replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope"
@@ -634,23 +640,21 @@ replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-SHRP  Walking-SAC1-S
 replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src-SHRP  Hiking-SAC2-SHRP "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness, Strong Hiking Route Preference"
 replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src-SHRP  Hiking-Mountain-SAC3-SHRP "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience, Strong Hiking Route Preference "
 replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src-SHRP  Hiking-Alpine-SAC4-SHRP "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience, Strong Hiking Route Preference"
-replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src-SHRP  Hiking-Alpine-SAC5-SHRP "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope, Strong Hiking Route Preference"
-replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-SHRP  Hiking-Alpine-SAC6-SHRP "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment, Strong Hiking Route Preference"
- 
+
 replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-VSHRP  Walking-SAC1-VSHRP "SAC T1 - hiking - Trail well cleared, 	Area flat or slightly sloped, no fall hazard, VERY Strong Hiking Route Preference"
 replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src-VSHRP  Hiking-SAC2-VSHRP "SAC T2 - mountain_hiking - Trail with continuous line and balanced ascent, Terrain partially steep, fall hazard possible, Hiking shoes recommended, Some sure footedness, VERY Strong Hiking Route Preference"
 replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src-VSHRP  Hiking-Mountain-SAC3-VSHRP "SAC T3 - demanding_mountain_hiking - exposed sites may be secured, possible need of hands for balance,	Partly exposed with fall hazard, Well sure-footed, Good hiking shoes, Basic alpine experience, VERY Strong Hiking Route Preference "
-replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src-VSHRP  Hiking-Alpine-SAC4-VSHRP "SAC T4 - alpine_hiking - sometimes need for hand use, Terrain quite exposed, jagged rocks, Familiarity with exposed terrain, Solid trekking boots, Some ability for terrain assessment, Alpine experience, VERY Strong Hiking Route Preference"
-replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src-VSHRP  Hiking-Alpine-SAC5-VSHRP "SAC T5 - demanding_alpine_hiking - single plainly climbing up to second grade, Exposed, demanding terrain, jagged rocks,  Mountaineering boots, Reliable assessment of terrain, Profound alpine experience, Elementary knowledge of handling with ice axe and rope, VERY Strong Hiking Route Preference"
-replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-VSHRP  Hiking-Alpine-SAC6-VSHRP "SAC T6 - difficult_alpine_hiking - climbing up to second grade, Often very exposed, precarious jagged rocks, glacier with danger to slip and fall, Mature alpine experience, Familiarity with the handling of technical alpine equipment, VERY Strong Hiking Route Preference"
- 
- 
-# replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-wet  Walking-wet "SAC T1 - hiking - Wet variant"
-# replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src-wet  Hiking-SAC2 "SAC T2 - mountain_hiking - Wet variant"
-# replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src-wet  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - Wet variant"
-# replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src-wet  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - Wet variant"
-# replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src-wet  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - Wet variant"
-# replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-wet  Hiking-Alpine-SAC6 "SAC T6 - difficult_alpine_hiking - Wet variant"
+
+fi
+
+if [[ "$scope" = "all" ]]; then 
+
+ replacetwo SAC_scale_limit 3 1 SAC_scale_preferred 1 0 $src-wet  Walking-wet "SAC T1 - hiking - Wet variant"
+ replacetwo SAC_scale_limit 3 2 SAC_scale_preferred 1 1 $src-wet  Hiking-SAC2 "SAC T2 - mountain_hiking - Wet variant"
+ replacetwo SAC_scale_limit 3 3 SAC_scale_preferred 1 1 $src-wet  Hiking-Mountain-SAC3 "SAC T3 - demanding_mountain_hiking - Wet variant"
+ replacetwo SAC_scale_limit 3 4 SAC_scale_preferred 1 2 $src-wet  Hiking-Alpine-SAC4 "SAC T4 - alpine_hiking - Wet variant"
+ replacetwo SAC_scale_limit 3 5 SAC_scale_preferred 1 3 $src-wet  Hiking-Alpine-SAC5 "SAC T5 - demanding_alpine_hiking - Wet variant"
+ replacetwo SAC_scale_limit 3 6 SAC_scale_preferred 1 4 $src-wet  Hiking-Alpine-SAC6 "SAC T6 - difficult_alpine_hiking - Wet variant"
 
 fi
 
@@ -662,11 +666,8 @@ fi
 # ******************************************************
 
 function mtbexec { 
-
 replaceone is_wet 0 0 $src     mtbzoss
-
 replaceone mtb_hard_factor 0 1 mtbzoss   mtbzoss-hard
-
 }
 
 # ******************************************************
@@ -674,16 +675,11 @@ replaceone mtb_hard_factor 0 1 mtbzoss   mtbzoss-hard
 # ******************************************************
 
 function streetexec { 
-
 replaceone iswet false false $src     Street-dry 
 replaceone iswet false true  $src     Street-wet 
- 
-
 }
 
 # ****************************************************
 #    M A I N     E X E C 
 
 main "$@"
-
-
