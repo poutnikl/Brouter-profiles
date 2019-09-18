@@ -38,17 +38,20 @@ set sedexe=c:\cygwin64\bin\sed.exe
 set wgetexe=c:\cygwin64\bin\wget.exe
 set zipexe=C:\bin64\7-Zip\7z.exe
 
-
+set scope=main
 
 rem ******************************************************
 rem               B R A N C H I N G
 rem ******************************************************
 
 if "%*"=="" goto :legend
-if /i "%*"=="all" goto :all
-if /i "%1"=="main" goto :allmain
 
 :shiftloop
+
+if /i "%1"=="all" set scope=all
+if /i "%1"=="main" set scope=main
+if /i "%1"=="locus" set scope=locus
+
 
 if /i "%1"=="car" call :car
 if /i "%1"=="bike" call :bike
@@ -56,26 +59,6 @@ if /i "%1"=="foot" call :foot
 
 shift
 if not "%1"=="" goto :shiftloop
-exit /b
-
-rem ******************************************************
-rem                     A L L
-rem ******************************************************
-
-:all
-call :car 
-call :bike
-call :foot
-exit /b
-
-rem ******************************************************
-rem                     A L L    M A I N
-rem ******************************************************
-
-:allmain
-call :car main
-call :bike main
-call :foot main
 exit /b
 
 
@@ -142,10 +125,10 @@ if exist %legfile% del %legfile%
 
 Echo Profile name,  Profile description ( generated )  >%legfile% 
 
-call :replaceone iswet 0 1 %src% %src%-wet
+if /i not %scope%==locus call :replaceone is_wet 0 1 %src% %src%-wet
 
-call :replaceone iswet 0 0 %src%     Trekking-dry "Standard Trekking profile by Poutnik, for dry weather"
-call :replaceone iswet 0 1 %src%-wet Trekking-wet "Standard Trekking profile by Poutnik, for wet weather ( partially avoids muddy or slicky surface, but does not forbid them )"
+call :replaceone is_wet 0 0 %src%     Trekking-dry "Standard Trekking profile by Poutnik, for dry weather"
+if /i not %scope%==locus  call :replaceone is_wet 0 1 %src%-wet Trekking-wet "Standard Trekking profile by Poutnik, for wet weather ( partially avoids muddy or slicky surface, but does not forbid them )"
 
 call :replaceone MTB_factor 0.0 0.5  %src%  Trekking-MTB-medium    "Trekking profile with medium focus on unpaved roads, moderately penalizing mainroads."
 call :replaceone MTB_factor 0.0 -0.5 %src%  Trekking-Fast          "Trekking profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
@@ -155,29 +138,16 @@ call :replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  %src%    MTB-lig
 
 call :replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 %src%       Trekking-SmallRoads       "Trekking profile more preferring small paved roads and tracks"
 
-if /i "%1"=="main" goto :closing
+if /i %scope%==main goto :closing
 
 call :replaceone MTB_factor 0.0 0.2  %src%  Trekking-MTB-light     "Trekking profile with light focus on unpaved roads, slightly penalizing mainroads."
 call :replaceone MTB_factor 0.0 1.0  %src%  Trekking-MTB-strong    "Trekking profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
-call :replaceone MTB_factor 0.0 0.2  %src%-wet  Trekking-MTB-light-wet     "Trekking wet weather profile with light focus on unpaved roads, slightly penalizing mainroads."
-call :replaceone MTB_factor 0.0 0.5  %src%-wet  Trekking-MTB-medium-wet    "Trekking wet weather profile with medium focus on unpaved roads, moderately penalizing mainroads."
-call :replaceone MTB_factor 0.0 1.0  %src%-wet  Trekking-MTB-strong-wet    "Trekking wet weather profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
-call :replaceone MTB_factor 0.0 -0.5 %src%-wet  Trekking-Fast-wet          "Trekking wet weather profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
 
-call :replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  %src%-wet MTB-wet "MTB wet weather profile, based on MTBiker feedback"
-call :replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  %src%-wet MTB-light-wet "Light MTB wet weather profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong"
-
-call :replaceone cycleroutes_pref 0.2 0.0 %src%      Trekking-ICR-dry  "Trekking profile ignoring existence of cycleroutes"
-call :replaceone cycleroutes_pref 0.2 0.0 %src%-wet  Trekking-ICR-wet  "Trekking profile ignoring existence of cycleroutes, wet weather variant"
-call :replaceone cycleroutes_pref 0.2 0.5 %src%      Trekking-FCR-dry  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes"
-call :replaceone cycleroutes_pref 0.2 0.5 %src%-wet  Trekking-FCR-wet  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes, wet weather variant"
-call :replaceone cycleroutes_pref 0.2 0.8 %src%      Trekking-LCR-dry  "Trekking profile for long distance cycleroutes"
-call :replaceone cycleroutes_pref 0.2 0.8 %src%-wet  Trekking-LCR-wet  "Trekking profile for long distance cycleroutes, wet weather variant"
-
-call :replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 %src%-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
+call :replaceone cycleroutes_pref 0.2 0.0 %src%      Trekking-ICR  "Trekking profile ignoring existence of cycleroutes"
+call :replaceone cycleroutes_pref 0.2 0.5 %src%      Trekking-FCR  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes"
+call :replaceone cycleroutes_pref 0.2 0.8 %src%      Trekking-LCR  "Trekking profile for long distance cycleroutes"
 
 call :replaceone hills 1 4 %src%  Trekking-Valley  "Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors."
-
 call :replaceone hills 1 5 %src%  Trekking-No-Flat  "Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost."
 
 call :replacetwo MTB_factor 0.0 1.5 smallpaved_factor 0.0 -0.75  %src% %src%-tmp
@@ -188,6 +158,22 @@ del %src%-tmp.brf
 call :replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -1.0  %src% %src%-tmp
 call :replacetwo isbike_for_mainroads true false  path_preference  0.0 20.0 %src%-tmp  Trekking-hilly-paths "Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths"
 del %src%-tmp.brf 
+
+if /i %scope%==locus goto :closing
+
+call :replaceone MTB_factor 0.0 0.2  %src%-wet  Trekking-MTB-light-wet     "Trekking wet weather profile with light focus on unpaved roads, slightly penalizing mainroads."
+call :replaceone MTB_factor 0.0 0.5  %src%-wet  Trekking-MTB-medium-wet    "Trekking wet weather profile with medium focus on unpaved roads, moderately penalizing mainroads."
+call :replaceone MTB_factor 0.0 1.0  %src%-wet  Trekking-MTB-strong-wet    "Trekking wet weather profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
+call :replaceone MTB_factor 0.0 -0.5 %src%-wet  Trekking-Fast-wet          "Trekking wet weather profile with moderate focus on mainroads, penalizing unpaved roads. Between Trekking and FastBike."
+
+call :replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -0.5  %src%-wet MTB-wet "MTB wet weather profile, based on MTBiker feedback"
+call :replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  %src%-wet MTB-light-wet "Light MTB wet weather profile for tired bikers, based on MTBiker feedback. Preferred to Trekking-MTB-strong"
+
+call :replaceone cycleroutes_pref 0.2 0.0 %src%-wet  Trekking-ICR-wet  "Trekking profile ignoring existence of cycleroutes, wet weather variant"
+call :replaceone cycleroutes_pref 0.2 0.5 %src%-wet  Trekking-FCR-wet  "Trekking profile sticking to cycleroutes, more preferring lond distance cycleroutes, wet weather variant"
+call :replaceone cycleroutes_pref 0.2 0.8 %src%-wet  Trekking-LCR-wet  "Trekking profile for long distance cycleroutes, wet weather variant"
+
+call :replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 %src%-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
 
 goto :closing
 
@@ -280,7 +266,7 @@ if exist %legfile% del %legfile%
 Echo Profile name,  Profile description ( generated )  >%legfile% 
 call :replaceone assign shortest_way  0 1 %src% Shortest-P "Shortest way - implemented naviagtion hints."
 
-call :replaceone iswet 0 1 %src% %src%-wet
+call :replaceone is_wet 0 1 %src% %src%-wet
 rem StrongHikingRoutePreference  SHRP
 call :replaceone  hiking_routes_preference  0.20 0.60 %src% %src%-SHRP
 rem VeryStrongHikingRoutePreference  VSHRP
