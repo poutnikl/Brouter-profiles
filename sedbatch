@@ -523,9 +523,7 @@ rm $src-tmp.brf
 replacetwo MTB_factor 0.0 2.0 smallpaved_factor 0.0 -1.0  $src $src-tmp
 replacetwo isbike_for_mainroads true false  path_preference  0.0 20.0 $src-tmp  Trekking-hilly-paths "Trekking in Hilly paths mode, Very strong preference of unpaved hilly paths"
 
-replaceone tandem_mode 0 1 $src  Trek_tandem  "Trekking on a tandem bike addressing the tandem manipulation specifics"
-replaceone ignore_cycle_barrier 1 0 Trek_tandem  Trek_tandem_barr  "Trekking on a tandem bike, respwcting bike barriers"
- 
+replacetwo tandem_mode 0 1  ignore_cycle_barrier 1 0   $src  Trek_tandem  "Trekking on a tandem bike addressing the tandem manipulation specifics"
 
 rm $src-tmp.brf 
 }
