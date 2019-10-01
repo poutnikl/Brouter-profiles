@@ -139,9 +139,9 @@
 function legend { 
 
 echo 'The sedbatch script expects an arbitrary sequence of following keywords to do anything:'
-echo 'bike car foot mtb street main all master develop copy nocopy local remote git'              
+echo 'bike car brcar foot mtb street main all master develop copy nocopy local remote git'              
 echo '.'
-echo 'bike, car, foot, mtb, street are "action" keywords, generating respective profiles from a profile template'
+echo 'bike, car, brcar, foot, mtb, street are "action" keywords, generating respective profiles from a profile template'
 echo '.'
 echo 'all(default), main set the scope of generated profiles ( all or the most important)'
 echo 'master(default), develop are modifiers determining the github repository branch, where the profile template is located'
@@ -186,8 +186,8 @@ copy_to_brouter=nocopy #copy or nocopy
 source=remote       #remote or git or local
 
 #Repository and template names
-# Essential rewuirement is to keep consistently
-# the keyword like "bike" in the vsriable names
+# Essential requirement is to keep consistently
+# the keyword like "bike" in the variable names
 
 
 GH_PROF_POUTNIK='https://raw.githubusercontent.com/poutnikl'
@@ -221,6 +221,13 @@ streettemp='streetbike_touring'
 streetprof=$GH_PROF_UTACK
 legend_prefix_street="BR-StrBike-Profiles"
 
+GH_PROF_BRCAR='https://raw.githubusercontent.com/abrensch'
+#https://github.com/abrensch/brouter
+brcarrep='brouter'
+brcartemp='car-fast'
+brcarprof=$GH_PROF_BRCAR
+legend_prefix_brcar="BR-BRcar-Profiles"
+
 # *************    P R E C H E C K S    **************
 
 #Is termux jailbreak set ?
@@ -247,7 +254,7 @@ if [[ -z "$1" ]]; then
 else
   for arg in "$@"; do 
     case $arg in
-      car|bike|foot|mtb|street) profgenprep "$arg";;
+      car|brcar|bike|foot|mtb|street) profgenprep "$arg";;
       develop|master) github_branch="$arg";;
       main|all|locus) scope="$arg";;
       copy) [[ $termux2storage = true ]] && copy_to_brouter=copy || copy_to_brouter=nocopy;;
@@ -267,9 +274,9 @@ fi
 # ******************************************************
 
  
-function profgenprep {  #$1=bike/foot/car/mtb/street 
+function profgenprep {  #$1=bike/foot/car/brcar/mtb/street 
 
-if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "mtb" || $1 = "street" ]]; then 
+if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "brcar" || $1 = "mtb" || $1 = "street" ]]; then 
 
   modus=$1 
   #If $modus=bike then repos=bikerep,  $template=biketemp, $profile=bikeprof
@@ -281,6 +288,7 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "mtb" || $1 = "street" ]]
     car) repos="$carrep"   ;  template="$cartemp" ;  profile="$carprof" ; legend_prefix="$legend_prefix_car" ;;
     mtb) repos="$mtbrep"   ;  template="$mtbtemp" ;  profile="$mtbprof" ; legend_prefix="$legend_prefix_mtb" ;; 
     street) repos="$streetrep"; template="$streettemp"; profile="$streetprof"; legend_prefix="$legend_prefix_street" ;;  
+    brcar) repos="$brcarrep"; template="$brcartemp"; profile="$brcarprof"; legend_prefix="$legend_prefix_brcar" ;;  
     *)  echo "there is no such a mode as the $modus" ;  exit ;;
   esac      
 
@@ -333,7 +341,11 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "mtb" || $1 = "street" ]]
 
   elif [[ $source = "remote" ]]; then
     cd "$script_folder" || { echo "$script_folder does not exist or no access there.";  exit; }
-    sourcefile="$profile/$repos/$github_branch/$template.brf"
+    if [[ $modus = "brcar" ]] ; then
+      sourcefile="$profile/$repos/$github_branch/misc/profiles2/$template.brf";
+    else
+      sourcefile="$profile/$repos/$github_branch/$template.brf";
+    fi
     wget -N "$sourcefile" || { echo "$sourcefile could not be retrieved."; exit; } 
 
     sourcefile="$script_folder/$template.brf"
@@ -357,6 +369,7 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "mtb" || $1 = "street" ]]
      (car)    carexec;;
      (mtb)    mtbexec;;
      (street) streetexec;;
+     (brcar)  brcarexec;;
      (*)      Echo "No such an execution mode as $modus"
   esac
 
@@ -401,7 +414,7 @@ function wdir {
   [[ -f "$sedwdir/*.brf" ]]        &&  rm  "$sedwdir/*.brf"
   [[ -f "$sedwdir/*legend.txt" ]]  &&  rm  "$sedwdir/*legend.txt"
 
-  [[ ! $modus = foot ]] && src="$template" || src="$template-template"
+  [[ ! $modus = foot && ! $modus = brcar ]] && src="$template" || src="$template-template"
 
   cp "$sourcefile" "$sedwdir/$src.brf" || { echo "$sourcefile $sedwdir/$src.brf could not be done"; exit; } 
 
@@ -508,7 +521,11 @@ replaceone MTB_factor 0.0 1.0  $src  Trekking-MTB-strong    "Trekking profile wi
 replaceone cycleroutes_pref 0.2 0.0 $src      Trekking-ICR  "Trekking profile ignoring existence of cycleroutes"
 replaceone cycleroutes_pref 0.2 0.5 $src      Trekking-FCR  "Trekking profile more following cycleroutes, expecially long distance ones"
 replaceone cycleroutes_pref 0.2 0.8 $src      Trekking-LCR  "Trekking profile for long distance cycleroutes"
+replaceone cycleroutes_pref 0.2 2.0 $src      Trekking-NCN  "Trekking profile for long distance cycleroutes, ICN + restricted NCN"
+replaceone cycleroutes_pref 0.2 5.0 $src      Trekking-LCN  "Trekking profile for long distance cycleroutes, ICN only"
  
+
+
 replaceone hills 1 2 Trekking-FCR Trekking-FCR-hills2   "Trekking profile ignoring existence of cycleroutes"
 replaceone hills 1 2 Trekking-LCR Trekking-LCR-hills2   "Trekking profile ignoring existence of cycleroutes"
 
@@ -675,6 +692,18 @@ replaceone mtb_hard_factor 0 1 mtbzoss   mtbzoss-hard
 function streetexec { 
 replaceone iswet false false $src     Street-dry 
 replaceone iswet false true  $src     Street-wet 
+}
+
+# ******************************************************
+#     B R C A R   P R O F I L E S   E X E C
+# ******************************************************
+
+function brcarexec { 
+replaceone avoid_toll false 0 $src  $src-temp
+replacetwo avoid_motorways false 0 avoid_unpaved false 0 $src-temp car-fast-gen
+rm $src-temp.brf
+replaceone vmax 160 90  car-fast-gen  car-eco-gen
+replacetwo recup_efficiency 0.7 0.0  f_recup 400 0   car-fast-gen  car-norecup-gen
 }
 
 # ****************************************************
