@@ -703,7 +703,7 @@ replaceone avoid_toll false 0 $src  $src-temp
 replacetwo avoid_motorways false 0 avoid_unpaved false 0 $src-temp car-fast-gen
 rm $src-temp.brf
 replaceone vmax 160 90  car-fast-gen  car-eco-gen
-replacetwo recup_efficiency 0.7 0.0  f_recup 400 0   car-fast-gen  car-norecup-gen
+
 }
 
 # ****************************************************
