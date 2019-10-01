@@ -527,12 +527,10 @@ replaceone cycleroutes_pref 0.2 0.0 $src Trekking-ICR  "Trekking profile ignorin
 replaceone cycleroutes_pref 0.2 0.5 $src Trekking-FCR  "Trekking profile more following cycleroutes, expecially long distance ones"
 replaceone cycleroutes_pref 0.2 2.0 $src Trekking-NCN  "Trekking profile for long distance cycleroutes, ICN + restricted NCN"
 replaceone cycleroutes_pref 0.2 5.0 $src Trekking-ICN  "Trekking profile for long distance cycleroutes, ICN only"
- 
 replaceone hills 1 2 Trekking-FCR Trekking-FCR-hills2   "Trekking profile more following cycleroutes, expecially long distance ones, trying to avoid hills"
 replaceone hills 1 2 Trekking-LCR Trekking-LCR-hills2   "Trekking profile for long distance cycleroutes, trying to avoid hills"
 replaceone hills 1 2 Trekking-NCN Trekking-NCN-hills2   "Trekking profile for long distance cycleroutes, ICN + restricted NCN, trying to avoid hills"
 replaceone hills 1 2 Trekking-ICN Trekking-ICN-hills2   "Trekking profile for long distance cycleroutes, ICN only, trying to avoid hills"
-
 
 replaceone hills 1 4 $src  Trekking-Valley  "Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors."
 replaceone hills 1 5 $src  Trekking-No-Flat  "Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost."
@@ -704,6 +702,7 @@ replaceone iswet false true  $src     Street-wet
 # ******************************************************
 
 function brcarexec { 
+
 #replaceone avoid_toll false 0 $src  $src-temp
 #replacetwo avoid_motorways false 0 avoid_unpaved false 0 $src-temp car-fast-gen
 #rm $src-temp.brf
