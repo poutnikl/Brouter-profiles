@@ -225,6 +225,7 @@ GH_PROF_BRCAR='https://raw.githubusercontent.com/abrensch'
 #https://github.com/abrensch/brouter
 brcarrep='brouter'
 brcartemp='car-fast'
+brcarpath='misc/profiles2/'
 brcarprof=$GH_PROF_BRCAR
 legend_prefix_brcar="BR-BRcar-Profiles"
 
@@ -282,13 +283,14 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "brcar" || $1 = "mtb" || 
   #If $modus=bike then repos=bikerep,  $template=biketemp, $profile=bikeprof
   echo "Modus is :$modus"
 
+  path=''
   case "$modus" in 
     bike) repos="$bikerep" ;  template="$biketemp";  profile="$bikeprof"; legend_prefix="$legend_prefix_bike" ;;
     foot) repos="$footrep" ;  template="$foottemp";  profile="$footprof"; legend_prefix="$legend_prefix_foot" ;;
     car) repos="$carrep"   ;  template="$cartemp" ;  profile="$carprof" ; legend_prefix="$legend_prefix_car" ;;
     mtb) repos="$mtbrep"   ;  template="$mtbtemp" ;  profile="$mtbprof" ; legend_prefix="$legend_prefix_mtb" ;; 
     street) repos="$streetrep"; template="$streettemp"; profile="$streetprof"; legend_prefix="$legend_prefix_street" ;;  
-    brcar) repos="$brcarrep"; template="$brcartemp"; profile="$brcarprof"; legend_prefix="$legend_prefix_brcar" ;;  
+    brcar) repos="$brcarrep"; template="$brcartemp"; profile="$brcarprof"; path="$brcarpath"; legend_prefix="$legend_prefix_brcar" ;;  
     *)  echo "there is no such a mode as the $modus" ;  exit ;;
   esac      
 
@@ -298,6 +300,7 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "brcar" || $1 = "mtb" || 
   echo legend_prefix "$legend_prefix"
   echo source "$source"
   echo branch "$github_branch"
+  echo path "$path"
 
 
   # modifier "local" reads template from the script folder,
@@ -324,7 +327,7 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "brcar" || $1 = "mtb" || 
     ifcd "$LOCAL_GIT_ROOT"
     ifcd "$repos"
     git checkout "$github_branch" || { echo "The branch $github_branch in $LOCAL_GIT_ROOT/$repos does not exist.";  exit; }
-    sourcefile="$LOCAL_GIT_ROOT/$repos/$template.brf"
+    sourcefile="$LOCAL_GIT_ROOT/$repos/$path$template.brf"
     [[ ! -f "$sourcefile" ]] && { echo "$sourcefile does not exist" ; exit;}
    
     [[ $source = "pull" ]] && { git fetch; git pull; }
@@ -341,15 +344,9 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "brcar" || $1 = "mtb" || 
 
   elif [[ $source = "remote" ]]; then
     cd "$script_folder" || { echo "$script_folder does not exist or no access there.";  exit; }
-    if [[ $modus = "brcar" ]] ; then
-      sourcefile="$profile/$repos/$github_branch/misc/profiles2/$template.brf";
-    else
-      sourcefile="$profile/$repos/$github_branch/$template.brf";
-    fi
+    sourcefile="$profile/$repos/$github_branch/$path$template.brf";
     wget -N "$sourcefile" || { echo "$sourcefile could not be retrieved."; exit; } 
-
     sourcefile="$script_folder/$template.brf"
-
     source_branch "$template" "$github_branch" "set"
 
   fi
@@ -699,9 +696,10 @@ replaceone iswet false true  $src     Street-wet
 # ******************************************************
 
 function brcarexec { 
-replaceone avoid_toll false 0 $src  $src-temp
-replacetwo avoid_motorways false 0 avoid_unpaved false 0 $src-temp car-fast-gen
-rm $src-temp.brf
+#replaceone avoid_toll false 0 $src  $src-temp
+#replacetwo avoid_motorways false 0 avoid_unpaved false 0 $src-temp car-fast-gen
+#rm $src-temp.brf
+replaceone vmax 160 160  $src  car-fast-gen
 replaceone vmax 160 90  car-fast-gen  car-eco-gen
 
 }
