@@ -132,6 +132,8 @@
 # and selected profiles from car template develop branch.
 # Additionally, the zipped profiles are copied to selected folder outside of termux
 #
+# 
+#
 # ******************************************************
 #                     L E G E N D
 # ******************************************************
@@ -322,6 +324,9 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "brcar" || $1 = "mtb" || 
     # modifier "git" reads template from local git repository and branch.
     # and copy it to the script folder.
     # script breaks if the repo or branch are not found.
+    # modifier "pull" is like "git", 
+    # but additionally starts with git pull
+    # so it ensures you have the latest version.
     
   elif [[ $source = "git" || $source = "pull" ]]; then
     ifcd "$LOCAL_GIT_ROOT"
@@ -339,6 +344,7 @@ if [[ $1 = "bike" || $1 = "foot" || $1 = "car" || $1 = "brcar" || $1 = "mtb" || 
     source_branch "$template" "$github_branch" "set"
 
   # modifier "remote" reads template from remote github repository and branch.
+  # without need to have git installed,
   # and copy it to the script folder.
   # script breaks if the repo or branch are not found.
 
@@ -510,21 +516,23 @@ replacetwo MTB_factor 0.0 1.0 smallpaved_factor 0.0 -0.3  $src    MTB-light "Lig
  
 replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 $src       Trekking-SmallRoads       "Trekking profile more preferring small paved roads and tracks"
  
+replaceone cycleroutes_pref 0.2 0.8 $src Trekking-LCR  "Trekking profile for long distance cycleroutes"
+ 
 if [[ "$scope" = "all" || "$scope" = "locus"   ]]; then {
 
 replaceone MTB_factor 0.0 0.2  $src  Trekking-MTB-light     "Trekking profile with light focus on unpaved roads, slightly penalizing mainroads."
 replaceone MTB_factor 0.0 1.0  $src  Trekking-MTB-strong    "Trekking profile with strong focus on unpaved roads, strongly penalizes mainroads. Similar to MTB light, that is preferred."
   
-replaceone cycleroutes_pref 0.2 0.0 $src      Trekking-ICR  "Trekking profile ignoring existence of cycleroutes"
-replaceone cycleroutes_pref 0.2 0.5 $src      Trekking-FCR  "Trekking profile more following cycleroutes, expecially long distance ones"
-replaceone cycleroutes_pref 0.2 0.8 $src      Trekking-LCR  "Trekking profile for long distance cycleroutes"
-replaceone cycleroutes_pref 0.2 2.0 $src      Trekking-NCN  "Trekking profile for long distance cycleroutes, ICN + restricted NCN"
-replaceone cycleroutes_pref 0.2 5.0 $src      Trekking-LCN  "Trekking profile for long distance cycleroutes, ICN only"
+replaceone cycleroutes_pref 0.2 0.0 $src Trekking-ICR  "Trekking profile ignoring existence of cycleroutes"
+replaceone cycleroutes_pref 0.2 0.5 $src Trekking-FCR  "Trekking profile more following cycleroutes, expecially long distance ones"
+replaceone cycleroutes_pref 0.2 2.0 $src Trekking-NCN  "Trekking profile for long distance cycleroutes, ICN + restricted NCN"
+replaceone cycleroutes_pref 0.2 5.0 $src Trekking-ICN  "Trekking profile for long distance cycleroutes, ICN only"
  
+replaceone hills 1 2 Trekking-FCR Trekking-FCR-hills2   "Trekking profile more following cycleroutes, expecially long distance ones, trying to avoid hills"
+replaceone hills 1 2 Trekking-LCR Trekking-LCR-hills2   "Trekking profile for long distance cycleroutes, trying to avoid hills"
+replaceone hills 1 2 Trekking-NCN Trekking-NCN-hills2   "Trekking profile for long distance cycleroutes, ICN + restricted NCN, trying to avoid hills"
+replaceone hills 1 2 Trekking-ICN Trekking-ICN-hills2   "Trekking profile for long distance cycleroutes, ICN only, trying to avoid hills"
 
-
-replaceone hills 1 2 Trekking-FCR Trekking-FCR-hills2   "Trekking profile ignoring existence of cycleroutes"
-replaceone hills 1 2 Trekking-LCR Trekking-LCR-hills2   "Trekking profile ignoring existence of cycleroutes"
 
 replaceone hills 1 4 $src  Trekking-Valley  "Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors."
 replaceone hills 1 5 $src  Trekking-No-Flat  "Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost."
@@ -560,10 +568,10 @@ replaceone cycleroutes_pref 0.2 0.8 $src-wet  Trekking-LCR-wet  "Trekking profil
 replaceone hills 1 2 Trekking-FCR-wet Trekking-FCR-wet-hills2   "Trekking profile ignoring existence of cycleroutes, wet weather variant"
 replaceone hills 1 2 Trekking-LCR-wet Trekking-LCR-wet-hills2   "Trekking profile ignoring existence of cycleroutes, wet weather variant"
 
- 
 replacetwo MTB_factor 0.0 -1.7 smallpaved_factor  0.0 2.0 $src-wet   Trekking-SmallRoads-wet   "Trekking profile more preferring small paved roads and tracks, wet weather variant"
   
 }
+
 fi
 
 } #  B I C Y C L E   P R O F I L E S   E X E C
