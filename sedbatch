@@ -535,7 +535,6 @@ replaceone hills 1 2 Trekking-ICN Trekking-ICN-hills2   "Trekking profile for lo
 
 replacetwo MTB_factor 0.0 0.5 smallpaved_factor  0.0 2.0 $src  $src-tmp
 replaceone UnifactorAdjust 0.0 -0.2  $src-tmp       TR-SmallRoads-New       "Trekking profile more preferring small paved roads and tracks"
- 
 
 replaceone hills 1 4 $src  Trekking-Valley  "Trekking in Valley mode, preferred flats as far as possible, even in expense of steep valley escape. On-the-slope based penalizations by Up-down-costfactors."
 replaceone hills 1 5 $src  Trekking-No-Flat  "Trekking in No-Flat mode, giving penalty to flat roads, with zero hillcost."
