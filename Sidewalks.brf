@@ -11,6 +11,9 @@ assign downhillcutoff 1.5
 assign uphillcost 0
 assign uphillcutoff 1.5
 
+assign   turnInstructionMode  = 1  # 0=none, 1=auto-choose, 2=locus-style, 3=osmand-style, 4=comment-style, 5=gpsies-style, 6=orux-style
+
+# strictfootways 
 # use 0 if fallback to other cummunications is allowed if no suitable communication is found
 # use 1 if only path/footway/track or sidewalks are allowed
 # Be aware if strictfootways=1 then lack of suitable communication cause routing failure,
@@ -26,6 +29,10 @@ assign any_cycleroute or route_bicycle_icn=yes or route_bicycle_ncn=yes or route
 assign nodeaccessgranted or any_cycleroute lcn=yes
 
 assign turncost 0
+
+assign initialclassifier =
+     if route=ferry then 1
+     else 0
 
 assign initialcost switch route=ferry 10000 0
 
@@ -46,11 +53,13 @@ assign defaultaccess
 assign bikeaccess
        or any_cycleroute
           switch bicycle=
-                 switch vehicle=
-                        defaultaccess
-                        switch or vehicle=private vehicle=no
-                               0
-                               1
+                 switch bicycle_road=yes
+                    1
+                    switch vehicle=
+                            defaultaccess
+                            switch or vehicle=private vehicle=no
+                                0
+                                1
                  not or bicycle=private or bicycle=no bicycle=dismount
 
 #
@@ -78,6 +87,52 @@ assign costfactor
   switch highway=residential|service|road   2
   switch highway=unclassified|tertiary     3
   5
+
+# way priorities used for voice hint generation
+
+assign isresidentialorliving = or highway=residential|living_street living_street=yes
+
+assign priorityclassifier =
+
+  if      ( highway=motorway                       ) then  30
+  else if ( highway=motorway_link                  ) then  29
+  else if ( highway=trunk                          ) then  28
+  else if ( highway=trunk_link                     ) then  27
+  else if ( highway=primary                        ) then  26
+  else if ( highway=primary_link                   ) then  25
+  else if ( highway=secondary                      ) then  24
+  else if ( highway=secondary_link                 ) then  23
+  else if ( highway=tertiary                       ) then  22
+  else if ( highway=tertiary_link                  ) then  21
+  else if ( highway=unclassified                   ) then  20
+  else if ( isresidentialorliving                  ) then  6
+  else if ( highway=service                        ) then  6
+  else if ( highway=cycleway                       ) then  6
+  else if ( or bicycle=designated bicycle_road=yes ) then  6
+  else if ( highway=track                          ) then if tracktype=grade1 then 6 else 4
+  else if ( highway=bridleway|road|path|footway    ) then  4
+  else if ( highway=steps                          ) then  2
+  else if ( highway=pedestrian                     ) then  2
+  else 0
+
+# some more classifying bits used for voice hint generation...
+
+assign isroundabout = junction=roundabout
+assign islinktype = highway=motorway_link|trunk_link|primary_link|secondary_link|tertiary_link
+assign isgoodforcars = if greater priorityclassifier 6 then true
+                  else if ( or isresidentialorliving highway=service ) then true
+                  else if ( and highway=track tracktype=grade1 ) then true
+                  else false
+
+
+# ... encoded into a bitmask
+
+assign classifiermask add multiply isroundabout   4
+                      add multiply islinktype     8
+                          multiply isgoodforcars 16
+
+# include `smoothness=` tags in the response's WayTags for track analysis
+assign dummyUsage = smoothness=
 
 ---context:node  # following code refers to node tags
 
