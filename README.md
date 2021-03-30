@@ -9,7 +9,7 @@
 
 * If you are going just derive your own profile from existing ones, you may want to fork this repository. But any eventual updates, based on further development, are supposed to be done manually by you.
 
-* **If you are going to contribute to development of the profiles derived from foot/bike/car profile templates above, do NOT fork this repository. Fork the above template repositories instead.**
+* **If you are going to contribute to development of the template-based profiles, do NOT fork this repository. Fork the above template repositories instead.**
 
 * See [Brouter profiles wiki](https://github.com/poutnikl/Brouter-profiles/wiki) for more detailed general and end user information.
 
