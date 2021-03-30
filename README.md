@@ -1,11 +1,15 @@
 
 #### My profiles for  [BRouter Android application](http://brouter.de/brouter/) 
  
-*  This repository serves just as a featured storage for end user profiles and auxiliary files. The template-based profile development is done in dedicated repositories for respective templates. 
+*  This repository serves just as a featured storage for end user profiles and auxiliary files. The template-based profile development is done in dedicated repositories for respective templates:
 
-* If you are going just derive your own profile from existing ones, you may want to fork this repository.
+    *   [Bicycle](https://github.com/poutnikl/Trekking-Poutnik)
+    *   [Hiking](https://github.com/poutnikl/Hiking-Poutnik)
+    *   [Car(obsolete)](https://github.com/poutnikl/Car-Profile)
 
-* **If you are going to contribute to development of the profiles derived from foot/bike/car profile templates by setting particular parameter values in the templates, do NOT fork this repository, but fork the independent respective repositories of the templates under my github account.**
+* If you are going just derive your own profile from existing ones, you may want to fork this repository. But any eventual updates, based on further development, are supposed to be done manually by you.
+
+* **If you are going to contribute to development of the profiles derived from foot/bike/car profile templates above, do NOT fork this repository. Fork the above template repositories instead.**
 
 * See [Brouter profiles wiki](https://github.com/poutnikl/Brouter-profiles/wiki) for more detailed general and end user information.
 
@@ -20,3 +24,4 @@ https://github.com/poutnikl/Brouter-profiles/wiki/Profile-developer-notes)  ( bo
    * [Zossebart's profiles](https://github.com/zossebart/brouter-mtb)  
    * [Thomas Traber's velomobile profile](https://github.com/ThomasTraber/brouter_profiles_and_testing)
    * [Jacob's city/street profile](https://github.com/utack/utack_brouter_data)
+
